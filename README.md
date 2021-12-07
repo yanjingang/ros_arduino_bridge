@@ -507,7 +507,7 @@ etc
 
 **3.5 发送 Twist 命令和查看 odom 里程计数据**
 
-将您的机器人放在块上，然后尝试发布 Twist 命令：
+将您的机器人放在地上，然后尝试发布 Twist 命令：
 
     $ rostopic pub -1 /cmd_vel geometry_msgs/Twist '{ angular: {z: 0.5} }'
 

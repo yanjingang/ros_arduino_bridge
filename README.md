@@ -268,6 +268,7 @@ or
     $ git clone git@github.com:yanjingang/ros_arduino_bridge.git
     $ cd ~/catkin_ws
     $ catkin_make
+    $ source ~/catkin_ws/devel/setup.bash
 
 
 提供的 Arduino 库称为 ROSArduinoBridge，位于 ros_arduino_firmware/src/libraries/ROSArduinoBridge 中。此示例库有特殊的硬件要求，但也可以通过关闭BaseController（如本文档末尾的 NOTES 部分所述）与其他 Arduino 类型板（例如 Uno）一起使用。

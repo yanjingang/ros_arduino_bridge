@@ -22,6 +22,8 @@
 import roslib; roslib.load_manifest('ros_arduino_python')
 import rospy
 from sensor_msgs.msg import Range
+import sys
+sys.path.append("~/catkin_ws/src/ros_arduino_bridge")
 from ros_arduino_msgs.msg import *
 
 LOW = 0

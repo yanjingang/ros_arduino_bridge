@@ -21,7 +21,8 @@
 
 """
 
-import thread
+#import thread
+import _thread as thread
 from math import pi as PI, degrees, radians
 import os
 import time

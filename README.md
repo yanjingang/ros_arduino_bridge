@@ -511,7 +511,7 @@ etc
     
     $ rostopic pub /cmd_vel geometry_msgs/Twist -r 1 -- '[2.0, 0.0, 0.0]' '[0.0, 0.0, 1.8]'
     
-    $ rostopic pub -1 /cmd_vel geometry_msgs/Twist '{ angular: {z: 0.5} }'
+    $ rostopic pub -1 /cmd_vel geometry_msgs/Twist '{ angular: {z: 1} }'
 
 车轮应按与逆时针旋转一致的方向转动（右轮向前，左轮向后）。如果它们转向相反的方向，请将配置文件中的 motor_reversed 参数设置为其当前设置的相反方向，然后终止并重新启动 arduino.launch 文件。
 

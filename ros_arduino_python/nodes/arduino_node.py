@@ -25,7 +25,9 @@ from ros_arduino_msgs.srv import *
 from ros_arduino_python.base_controller import BaseController
 from geometry_msgs.msg import Twist
 import os, time
-import _thread as thread
+import sys
+if(sys.version[:1] == "3"):import _thread as thread
+else:import thread
 from serial.serialutil import SerialException
 
 class ArduinoROS():

@@ -21,8 +21,9 @@
 
 """
 
-#import thread
-import _thread as thread
+import sys
+if(sys.version[:1] == "3"):import _thread as thread
+else:import thread
 from math import pi as PI, degrees, radians
 import os
 import time

@@ -262,7 +262,7 @@ or
 您应该会看到您所属的组列表，包括work。
 
 
-**2.5 .安装 ros_arduino_bridge 库:**
+**2.5 安装 ros_arduino_bridge 库:**
 
     $ cd ~/catkin_ws/src
     $ git clone git@github.com:yanjingang/ros_arduino_bridge.git
@@ -273,25 +273,8 @@ or
 
 
 
-3.案例实现
------------------------------------
-基于ros_arduino_bridge的底盘实现具体步骤如下:
+**2.6.固件命令**
 
-* 了解并修改Arduino端程序主入口ROSArduinoBridge.ino 文件；
-
-* Arduino端添加编码器驱动；
-
-* Arduino端添加电机驱动模块；
-
-* Arduino端实现PID调试；
-
-* ROS端修改配置文件。
-
-
-
-
-4.固件命令
------------------
 ROSArduinoLibrary 通过串行端口接受单字母命令，用于轮询传感器、控制伺服系统、驱动机器人和读取编码器。这些命令可以通过任何串行接口发送到 Arduino，包括 Arduino IDE 中的串行监视器。
 
 **注意：** 在尝试这些命令之前，使用串行监视器窗口右下角的两个下拉菜单将串行监视器波特率设置为 57600，并将行终止符设置为“回车”或“NL & CR”。
@@ -331,8 +314,7 @@ e
 m 20 20
 
 
-测试您的接线连接 Testing your Wiring Connections
--------------------------------
+**2.7 测试您的接线连接**
 在差动驱动机器人上，电机连接到极性相反的电机控制器端子。类似地，来自编码器的 A/B 引线以相反的方式相互连接。但是，您仍然需要确保 
 (a) 在给定正电机速度时车轮向前移动，以及 (b) 当车轮向前移动时编码器计数增加。
 
@@ -341,8 +323,54 @@ m 20 20
 最后，您可以使用“r”和“e”命令通过手动旋转轮子大约一整圈并检查报告的计数来验证预期的编码器计数。
 
 
-配置 ros_arduino_python 节点
------------------------------------------
+
+3.案例实现
+-----------------------------------
+基于ros_arduino_bridge的底盘实现具体步骤如下:
+
+* 了解并修改Arduino端程序主入口ROSArduinoBridge.ino 文件；
+
+* Arduino端添加编码器驱动；
+
+* Arduino端添加电机驱动模块；
+
+* Arduino端实现PID调试；
+
+* ROS端修改配置文件。
+
+**3.1 配置 ROSArduinoBridge 节点**
+编辑ROSArduinoBridge.ino文件，打开底盘控制、L298电机驱动，关闭舵机
+<pre>
+//是否启用底盘控制器
+#define USE_BASE      // Enable the base controller code
+//#undef USE_BASE     // Disable the base controller code
+
+/* Define the motor controller and encoder library you are using */
+//启用基座控制器需要设置的电机驱动以及编码器驱动
+#ifdef USE_BASE
+   /* The Pololu VNH5019 dual motor driver shield */
+   //#define POLOLU_VNH5019
+
+   /* The Pololu MC33926 dual motor driver shield */
+   //#define POLOLU_MC33926
+
+   /* The RoboGaia encoder shield */
+   //#define ROBOGAIA
+   
+   /* Encoders directly attached to Arduino board */
+   #define ARDUINO_ENC_COUNTER
+
+   /* L298 Motor driver*/
+   #define L298_MOTOR_DRIVER
+#endif
+
+//是否启用舵机
+//#define USE_SERVOS  // Enable use of PWM servos as defined in servos.h
+#undef USE_SERVOS     // Disable use of PWM servos
+</pre>
+
+
+**3.2 配置 ros_arduino_python 节点**
 现在您的 Arduino 正在运行所需的示例，您可以在您的 PC 上配置 ROS 端。您可以通过编辑目录 ros_arduino_python/config 中的 YAML 文件来定义机器人的尺寸、PID 参数和传感器配置。所以首先进入该目录：
 
     $ roscd ros_arduino_python/config
@@ -431,8 +459,7 @@ _设置传动系统和 PID 参数_
 PID 参数设置起来比较棘手。您可以从示例值开始，但请确保在向其发送第一个 Twist 命令之前将您的机器人放在块上。
 
 
-启动 ros_arduino_python 节点
----------------------------------------
+**3.3 启动 ros_arduino_python 节点**
 查看 ros_arduino_python/launch 目录中的启动文件 arduino.launch。如您所见，它指向一个名为 my_arduino_params.yaml 的配置文件。如果您将配置文件命名为不同的名称，请更改启动文件中的名称。
 
 连接 Arduino 并运行 MegaRobogaiaPololu 草图后，使用您的参数启动 ros_arduino_python 节点：
@@ -454,8 +481,7 @@ etc
 
 如果你的机器人上有任何 Ping 声纳传感器并且你在你的配置文件中定义了它们，它们应该开始闪烁以表明你已经建立了连接。
 
-查看传感器数据
--------------------
+**3.4 查看传感器数据**
 要查看汇总的传感器数据，请回显传感器状态主题：
 
     $ rostopic echo /arduino/sensor_state
@@ -473,8 +499,7 @@ etc
     $ rxplot -p 60 /arduino/sensor/ir_front_center/range
 
 
-发送 Twist 命令和查看 odom 里程计数据
-------------------------------------------------
+**3.5 发送 Twist 命令和查看 odom 里程计数据**
 将您的机器人放在块上，然后尝试发布 Twist 命令：
 
     $ rostopic pub -1 /cmd_vel geometry_msgs/Twist '{ angular: {z: 0.5} }'
@@ -493,8 +518,7 @@ or
 
    $ rxplot -p 60 /odom/pose/pose/position/x:y, /odom/twist/twist/linear/x, /odom/twist/twist/angular/z
 
-ROS服务 ROS Services
-------------
+**3.6 ROS服务 ROS Services**
 ros_arduino_python 包还定义了一些 ROS 服务，如下所示：
 
 **digital_set_direction** - 设置数字引脚的方向
@@ -524,8 +548,7 @@ where pin is the pin number and value is 0 for LOW and 1 for HIGH.
 其中 id 是 Arduino 草图 (servos.h) 中定义的伺服索引
 
 
-使用板载车轮编码器计数器（仅限 Arduino Uno）
-------------------------------------------------------------
+**3.7 使用板载车轮编码器计数器（仅限 Arduino Uno）**
 该固件支持 Arduino Uno 的板载车轮编码器计数器。这允许将车轮编码器直接连接到 Arduino 板，而无需任何额外的车轮编码器计数器设备（例如 RoboGaia 编码器屏蔽）。
 
 为了速度，代码直接寻址特定的 Atmega328p 端口和中断，使此实现依赖于 Atmega328p（Arduino Uno）。（不过，它应该很容易适应其他板/AVR 芯片。）
@@ -547,7 +570,7 @@ where pin is the pin number and value is 0 for LOW and 1 for HIGH.
 
 编译更改并上传到您的控制器。
 
-使用 L298 电机驱动器 Using L298 Motor driver
+**3.8 使用 L298 电机驱动器 Using L298 Motor driver**
 -----------------------
 L298电机驱动器和arduino板之间的接线在固件中的motor_driver.h中定义如下：
 
@@ -560,7 +583,8 @@ L298电机驱动器和arduino板之间的接线在固件中的motor_driver.h中�
 
 以这种方式连接它们或根据需要更改它们，并确保定义了 L298 电机驱动程序，然后编译并上传固件。
 
-笔记 NOTES
+
+9.笔记 NOTES
 -----
 如果您没有运行base control器所需的硬件，请按照以下说明操作，以便您仍然可以使用与 Arduino 兼容的控制器读取传感器和控制 PWM 伺服系统。
 

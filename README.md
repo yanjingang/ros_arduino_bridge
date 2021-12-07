@@ -41,63 +41,121 @@
 
 **1.4 文件结构：**
 ├── ros_arduino_bridge                      # metapackage (元功能包)
+
 │   ├── CMakeLists.txt
+
 │   └── package.xml
+
 ├── ros_arduino_firmware                    #固件包，更新到Arduino
+
 │   ├── CMakeLists.txt
+
 │   ├── package.xml
+
 │   └── src
+
 │       └── libraries                       #库目录
+
 │           ├── MegaRobogaiaPololu          #针对Pololu电机控制器，MegaRobogaia编码器的头文件定义
+
 │           │   ├── commands.h              #定义命令头文件
+
 │           │   ├── diff_controller.h       #差分轮PID控制头文件
+
 │           │   ├── MegaRobogaiaPololu.ino  #PID实现文件
+
 │           │   ├── sensors.h               #传感器相关实现，超声波测距，Ping函数
+
 │           │   └── servos.h                #伺服器头文件
+
 │           └── ROSArduinoBridge            #Arduino相关库定义
+
 │               ├── commands.h              #定义命令
+
 │               ├── diff_controller.h       #差分轮PID控制头文件
+
 │               ├── encoder_driver.h        #编码器驱动头文件
+
 │               ├── encoder_driver.ino      #编码器驱动实现, 读取编码器数据，重置编码器等
+
 │               ├── motor_driver.h          #电机驱动头文件
+
 │               ├── motor_driver.ino        #电机驱动实现，初始化控制器，设置速度
+
 │               ├── ROSArduinoBridge.ino    #核心功能实现，程序入口
+
 │               ├── sensors.h               #传感器头文件及实现
+
 │               ├── servos.h                #伺服器头文件，定义插脚，类
+
 │               └── servos.ino              #伺服器实现
+
 ├── ros_arduino_msgs                        #消息定义包
+
 │   ├── CMakeLists.txt
+
 │   ├── msg                                 #定义消息
+
 │   │   ├── AnalogFloat.msg                 #定义模拟IO浮点消息
+
 │   │   ├── Analog.msg                      #定义模拟IO数字消息
+
 │   │   ├── ArduinoConstants.msg            #定义常量消息
+
 │   │   ├── Digital.msg                     #定义数字IO消息
+
 │   │   └── SensorState.msg                 #定义传感器状态消息
+
 │   ├── package.xml
+
 │   └── srv                                 #定义服务
+
 │       ├── AnalogRead.srv                  #模拟IO输入
+
 │       ├── AnalogWrite.srv                 #模拟IO输出
+
 │       ├── DigitalRead.srv                 #数字IO输入
+
 │       ├── DigitalSetDirection.srv　　　　 #数字IO设置方向
+
 │       ├── DigitalWrite.srv                #数字IO输入
+
 │       ├── ServoRead.srv                   #伺服电机输入
+
 │       └── ServoWrite.srv                  #伺服电机输出
+
 └── ros_arduino_python                      #ROS相关的Python包，用于上位机，树莓派等开发板或电脑等。
+
     ├── CMakeLists.txt
+
     ├── config                              #配置目录
+
     │   └── arduino_params.yaml             #定义相关参数，端口，rate，PID，sensors等默认参数。由arduino.launch调用
+
     ├── launch
+
     │   └── arduino.launch                  #启动文件
+
     ├── nodes
+
     │   └── arduino_node.py                 #python文件,实际处理节点，由arduino.launch调用，即可单独调用。
+
     ├── package.xml
+
     ├── setup.py
+
     └── src                                 #Python类包目录
+
         └── ros_arduino_python
+
             ├── arduino_driver.py           #Arduino驱动类
+
             ├── arduino_sensors.py          #Arduino传感器类
+
             ├── base_controller.py          #基本控制类，订阅cmd_vel话题，发布odom话题
+
             └── __init__.py                 #类包默认空文件
+
 
 上述目录结构虽然复杂，但是关注的只有两大部分:
 

@@ -22,6 +22,7 @@
 
 
 **1.2 注意：**
+
 * Robogaia Mega Encoder shield 只能与 Arduino Mega 一起使用。
 
 * 板上编码计数器（ARDUINO_ENC_COUNTER）目前仅支持Arduino Uno
@@ -171,7 +172,7 @@
 
 
 **1.5 官方 ROS 文档** 
---------------------------
+
 可以在 ROS wiki 上找到此文档的标准 ROS 样式版本：
 
 http://www.ros.org/wiki/ros_arduino_bridge
@@ -181,6 +182,7 @@ http://www.ros.org/wiki/ros_arduino_bridge
 2.准备工作
 -------------------
 **2.1 Python Serial:** 
+
 ros_arduino_bridge 依赖于 python-serial 功能包，请提前安装此包。
 
 在Ubuntu下安装python-serial包，使用命令：
@@ -197,10 +199,12 @@ or
 
 
 **2.2 Arduino IDE 1.6.6 或更高版本:**
+
 请注意，条件 #include 语句的预处理在早期版本的 Arduino IDE 中被破坏。为确保 ROS Arduino Bridge 固件正确编译，请务必安装 1.6.6 或更高版本的 Arduino IDE。您可以从https://www.arduino.cc/en/Main/Software下载 IDE 。
 
 
 **2.3 硬件:**
+
 固件应与任何兼容 Arduino 的控制器配合使用，以读取传感器和控制 PWM 伺服系统。但是，要使用Base Controller，您将需要上述支持的电机控制器和编码器硬件。如果您没有这个硬件，您仍然可以尝试读取传感器和控制伺服系统的软件包。有关如何执行此操作的说明，请参阅本文档末尾的 NOTES 部分。
 
 要使用Base Controller，您还必须为电机控制器和编码器安装适当的库。对于 Pololu VNH5019 双电机屏蔽，可以在以下位置找到库：
@@ -224,6 +228,7 @@ L298 电机驱动器不需要任何库
 
 
 **2.4 在 Linux 下准备你的串口:**
+
 您的 Arduino 可能会作为端口 /dev/ttyACM# 或 /dev/ttyUSB# 连接到您的 Linux 计算机，其中 # 是一个数字，如 0、1、2 等，具体取决于连接的其他设备的数量。做出决定的最简单方法是拔下所有其他 USB 设备，插入您的 Arduino，然后运行命令：
 
     $ ls /dev/ttyACM*
@@ -268,7 +273,7 @@ or
 
 
 
-3. 案例实现
+3.案例实现
 -----------------------------------
 基于ros_arduino_bridge的底盘实现具体步骤如下:
 
@@ -285,7 +290,7 @@ or
 
 
 
-4. 固件命令
+4.固件命令
 -----------------
 ROSArduinoLibrary 通过串行端口接受单字母命令，用于轮询传感器、控制伺服系统、驱动机器人和读取编码器。这些命令可以通过任何串行接口发送到 Arduino，包括 Arduino IDE 中的串行监视器。
 

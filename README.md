@@ -1,54 +1,130 @@
-概述
+1.ros_arduino_bridge 概述
 --------
-此分支 (indigo-devel) 适用于 ROS Indigo 及更高版本，并使用 Catkin 构建系统。它也能与 ROS Hydro 兼容。
+该功能包包含Arduino库和用来控制Arduino的ROS驱动包，它旨在成为在ROS下运行Arduino控制的机器人的完整解决方案。
 
-这个 ROS 库包括一个 Arduino 库（ROSArduinoBridge）和一组 ROS 包，用于使用标准 ROS 消息和服务控制基于 Arduino 的机器人。这个库不依赖于ROS Serial。
+其中当前主要关注的是:功能包集中一个兼容不同驱动的机器人的基本控制器（base controller），它可以接收ROS Twist类型的消息，可以发布里程数据到ROS端。
 
-特点包括：
+**1.1 特点：**
 
-* 直接支持 Ping 声纳和夏普红外 (GP2D12) 传感器
+* 直接支持 Ping 声纳和Sharp红外 (GP2D12) 传感器
 
-* 可以从通用模拟和数字传感器读取数据
+* 也可以从通用的模拟和数字信号的传感器读取数据
 
 * 可以控制数字输出（例如打开和关闭开关或 LED）
 
-* 支持 PWM 伺服
-* 如果使用所需硬件，可配置Base Controller
+* 支持PWM伺服机
 
-该库包括一个用于差速驱动机器人的Base Controller，该控制器接受 ROS Twist 消息并将 Odom 里程计数据发布回 PC。Base Controller需要使用电机控制器和编码器来读取里程数据。库的当前版本支持以下基本控制器硬件：
+* 如果使用所要求的硬件的话，可以配置基本的控制
 
-* Pololu VNH5019 双电机控制器屏蔽 ( http://www.pololu.com/catalog/product/2502 ) 或 Pololu MC33926 双电机屏蔽 ( http://www.pololu.com/catalog/product/2503 )。
+* 如果你的Arduino编程基础好的话，并且具有python基础的话，你就可以很自由的改动代码来满足你的硬件要求
 
-* Robogaia Mega Encoder shield ( http://www.robogaia.com/two-axis-encoder-counter-mega-shield-version-2.html ) 或板载车轮编码器计数器。
-
-**注意：** Robogaia Mega Encoder shield 只能与 Arduino Mega 一起使用。板载车轮编码器计数器目前仅受 Arduino Uno 支持。
-
-* L298电机驱动器
-
-* 该库可以轻松扩展以包括对其他电机控制器和编码器硬件或库的支持。
-
-包含的模块：
-
-* ros_arduino_bridge：   桥接库，catkin_make安装即可
-
-* ros_arduino_firmware： 烧制到arduino固件上的代码主要是执行运动指令并发送电机编码器数据
-
-* ros_arduino_msgs：     桥接库的默认msg，catkin_make安装即可
-
-* ros_arduino_python：   ros端代码，监听/cmd_vel，并将电机编码器数据转换为里程计数据发送到/odom
+* * 该库包括一个用于差速驱动机器人的Base Controller，该控制器接受 ROS Twist 消息并将 Odom 里程计数据发布回 PC。Base Controller需要使用电机控制器和编码器来读取里程数据。库的当前版本支持以下基本控制器硬件：
 
 
+**1.2 注意：**
+* Robogaia Mega Encoder shield 只能与 Arduino Mega 一起使用。
 
-官方 ROS 文档
+* 板上编码计数器（ARDUINO_ENC_COUNTER）目前仅支持Arduino Uno
+
+* 上面非硬性规定，有一定的编程基础，你也可以按需更改
+
+**1.3 模块：**
+
+* ros_arduino_bridge：   metapackage (元功能包)，catkin_make安装即可
+
+* ros_arduino_msgs：     #消息定义包
+
+* ros_arduino_firmware： 固件包，更新到Arduino（执行运动指令并发送电机编码器数据）
+
+* ros_arduino_python：   #ROS相关的Python包，用于上位机，树莓派等开发板或电脑等（监听/cmd_vel，并将电机编码器数据转换为里程计数据发送到/odom）
+
+
+**1.4 文件结构：**
+├── ros_arduino_bridge                      # metapackage (元功能包)
+│   ├── CMakeLists.txt
+│   └── package.xml
+├── ros_arduino_firmware                    #固件包，更新到Arduino
+│   ├── CMakeLists.txt
+│   ├── package.xml
+│   └── src
+│       └── libraries                       #库目录
+│           ├── MegaRobogaiaPololu          #针对Pololu电机控制器，MegaRobogaia编码器的头文件定义
+│           │   ├── commands.h              #定义命令头文件
+│           │   ├── diff_controller.h       #差分轮PID控制头文件
+│           │   ├── MegaRobogaiaPololu.ino  #PID实现文件
+│           │   ├── sensors.h               #传感器相关实现，超声波测距，Ping函数
+│           │   └── servos.h                #伺服器头文件
+│           └── ROSArduinoBridge            #Arduino相关库定义
+│               ├── commands.h              #定义命令
+│               ├── diff_controller.h       #差分轮PID控制头文件
+│               ├── encoder_driver.h        #编码器驱动头文件
+│               ├── encoder_driver.ino      #编码器驱动实现, 读取编码器数据，重置编码器等
+│               ├── motor_driver.h          #电机驱动头文件
+│               ├── motor_driver.ino        #电机驱动实现，初始化控制器，设置速度
+│               ├── ROSArduinoBridge.ino    #核心功能实现，程序入口
+│               ├── sensors.h               #传感器头文件及实现
+│               ├── servos.h                #伺服器头文件，定义插脚，类
+│               └── servos.ino              #伺服器实现
+├── ros_arduino_msgs                        #消息定义包
+│   ├── CMakeLists.txt
+│   ├── msg                                 #定义消息
+│   │   ├── AnalogFloat.msg                 #定义模拟IO浮点消息
+│   │   ├── Analog.msg                      #定义模拟IO数字消息
+│   │   ├── ArduinoConstants.msg            #定义常量消息
+│   │   ├── Digital.msg                     #定义数字IO消息
+│   │   └── SensorState.msg                 #定义传感器状态消息
+│   ├── package.xml
+│   └── srv                                 #定义服务
+│       ├── AnalogRead.srv                  #模拟IO输入
+│       ├── AnalogWrite.srv                 #模拟IO输出
+│       ├── DigitalRead.srv                 #数字IO输入
+│       ├── DigitalSetDirection.srv　　　　 #数字IO设置方向
+│       ├── DigitalWrite.srv                #数字IO输入
+│       ├── ServoRead.srv                   #伺服电机输入
+│       └── ServoWrite.srv                  #伺服电机输出
+└── ros_arduino_python                      #ROS相关的Python包，用于上位机，树莓派等开发板或电脑等。
+    ├── CMakeLists.txt
+    ├── config                              #配置目录
+    │   └── arduino_params.yaml             #定义相关参数，端口，rate，PID，sensors等默认参数。由arduino.launch调用
+    ├── launch
+    │   └── arduino.launch                  #启动文件
+    ├── nodes
+    │   └── arduino_node.py                 #python文件,实际处理节点，由arduino.launch调用，即可单独调用。
+    ├── package.xml
+    ├── setup.py
+    └── src                                 #Python类包目录
+        └── ros_arduino_python
+            ├── arduino_driver.py           #Arduino驱动类
+            ├── arduino_sensors.py          #Arduino传感器类
+            ├── base_controller.py          #基本控制类，订阅cmd_vel话题，发布odom话题
+            └── __init__.py                 #类包默认空文件
+
+上述目录结构虽然复杂，但是关注的只有两大部分:
+
+* ros_arduino_bridge/ros_arduino_firmware/src/libraries/ROSArduinoBridge
+* ros_arduino_bridge/ros_arduino_python/config/arduino_params.yaml
+
+前者是Arduino端的固件包实现，需要修改并上传至Arduino电路板；
+
+后者是ROS端的一个配置文件，相关驱动已经封装完毕，我们只需要修改配置信息即可。
+
+整体而言，借助于 ros_arduino_bridge 可以大大提高我们的开发效率。
+
+
+**1.5 官方 ROS 文档** 
 --------------------------
 可以在 ROS wiki 上找到此文档的标准 ROS 样式版本：
 
 http://www.ros.org/wiki/ros_arduino_bridge
 
 
-系统要求
+
+2.准备工作
 -------------------
-**Python Serial:** 在Ubuntu下安装python-serial包，使用命令：
+**2.1 Python Serial:** 
+ros_arduino_bridge 依赖于 python-serial 功能包，请提前安装此包。
+
+在Ubuntu下安装python-serial包，使用命令：
 
     $ sudo apt-get install python-serial
 
@@ -60,12 +136,13 @@ or
 
     $ sudo easy_install -U pyserial
 
-**Arduino IDE 1.6.6 或更高版本:**
+
+**2.2 Arduino IDE 1.6.6 或更高版本:**
 请注意，条件 #include 语句的预处理在早期版本的 Arduino IDE 中被破坏。为确保 ROS Arduino Bridge 固件正确编译，请务必安装 1.6.6 或更高版本的 Arduino IDE。您可以从https://www.arduino.cc/en/Main/Software下载 IDE 。
 
-**硬件:**
-固件应与任何兼容 Arduino 的控制器配合使用，以读取传感器和控制 PWM 伺服系统。但是，要使用Base Controller，您将需要上述支持的电机控制器和编码器硬件。如果您没有这个硬件，您仍然可以尝试读取传感器和控制伺服系统的软件包。有关如何执行此操作的说明，请参阅本文档末尾的 NOTES 部分。
 
+**2.3 硬件:**
+固件应与任何兼容 Arduino 的控制器配合使用，以读取传感器和控制 PWM 伺服系统。但是，要使用Base Controller，您将需要上述支持的电机控制器和编码器硬件。如果您没有这个硬件，您仍然可以尝试读取传感器和控制伺服系统的软件包。有关如何执行此操作的说明，请参阅本文档末尾的 NOTES 部分。
 
 要使用Base Controller，您还必须为电机控制器和编码器安装适当的库。对于 Pololu VNH5019 双电机屏蔽，可以在以下位置找到库：
 
@@ -86,8 +163,8 @@ L298 电机驱动器不需要任何库
 最后，假设您使用的是 1.0 或更高版本的 Arduino IDE。
 
 
-在 Linux 下准备你的串口
---------------------------------------
+
+**2.4 在 Linux 下准备你的串口:**
 您的 Arduino 可能会作为端口 /dev/ttyACM# 或 /dev/ttyUSB# 连接到您的 Linux 计算机，其中 # 是一个数字，如 0、1、2 等，具体取决于连接的其他设备的数量。做出决定的最简单方法是拔下所有其他 USB 设备，插入您的 Arduino，然后运行命令：
 
     $ ls /dev/ttyACM*
@@ -121,60 +198,35 @@ or
 您应该会看到您所属的组列表，包括work。
 
 
-安装 ros_arduino_bridge 库
-----------------------------------------------
+**2.5 .安装 ros_arduino_bridge 库:**
 
     $ cd ~/catkin_ws/src
     $ git clone git@github.com:yanjingang/ros_arduino_bridge.git
     $ cd ~/catkin_ws
     $ catkin_make
 
-提供的 Arduino 库称为 ROSArduinoBridge，位于 ros_arduino_firmware 包中。此示例库有特殊的硬件要求，但也可以通过关闭BaseController（如本文档末尾的 NOTES 部分所述）与其他 Arduino 类型板（例如 Uno）一起使用。
-
-要安装 ROSArduinoBridge 库，请按照下列步骤操作：
-
-    $ cd SKETCHBOOK_PATH
-
-其中 SKETCHBOOK_PATH 是 Arduino 示例库的路径。
-
-    $ cp -rp `rospack find ros_arduino_firmware`/src/libraries/ROSArduinoBridge ROSArduinoBridge
-
-最后一条命令将 ROSArduinoBridge 文件复制到您的 示例 文件夹中。下一节将介绍如何配置、编译和上传此库。
+提供的 Arduino 库称为 ROSArduinoBridge，位于 ros_arduino_firmware/src/libraries/ROSArduinoBridge 中。此示例库有特殊的硬件要求，但也可以通过关闭BaseController（如本文档末尾的 NOTES 部分所述）与其他 Arduino 类型板（例如 Uno）一起使用。
 
 
-加载 ROSArduinoBridge 示例
+
+3. 案例实现
 -----------------------------------
+基于ros_arduino_bridge的底盘实现具体步骤如下:
 
-* 如果您使用的是base controller，请确保您已经将合适的电机控制器和编码器库安装到您的 Arduino 示例/库文件夹中。
+* 了解并修改Arduino端程序主入口ROSArduinoBridge.ino 文件；
 
-* 启动 Arduino 1.0 IDE 并加载 ROSArduinoBridge 示例。您应该可以通过以下方式找到它：
+* Arduino端添加编码器驱动；
 
-    文件->示例->ROSArduinoBridge
+* Arduino端添加电机驱动模块；
 
-注意：如果您没有所需的基本控制器硬件但仍想尝试代码，请参阅文件末尾的注释。
+* Arduino端实现PID调试；
 
-通过取消对#define 语句的注释并注释掉任何其他语句来选择一种受支持的电机控制器。默认情况下，选择 Pololu VNH5019 驱动程序。
-
-通过取消注释#define 语句并注释掉任何其他语句来选择支持的编码器库。默认选择 Robogaia Mega Encoder 防护罩。
-
-如果要控制连接到控制器的 PWM 伺服系统，请查找以下行：
-
-<pre>
-#define USE_SERVOS
-</pre>
-
-并确保它没有像这样注释掉：
-
-<pre>
-//#define USE_SERVOS
-</pre>
-
-然后您必须编辑头文件servos.h 并更改N_SERVOS 参数以及您所连接的舵机的引脚编号。
-
-* 编译示例并将其上传到您的 Arduino。
+* ROS端修改配置文件。
 
 
-固件命令
+
+
+4. 固件命令
 -----------------
 ROSArduinoLibrary 通过串行端口接受单字母命令，用于轮询传感器、控制伺服系统、驱动机器人和读取编码器。这些命令可以通过任何串行接口发送到 Arduino，包括 Arduino IDE 中的串行监视器。
 

@@ -1,12 +1,9 @@
 /*********************************************************************
  *  ROSArduinoBridge 主程序
  
-    A set of simple serial commands to control a differential drive
-    robot and receive back sensor and odometry data. Default 
-    configuration assumes use of an Arduino Mega + Pololu motor
-    controller shield + Robogaia Mega Encoder shield.  Edit the
-    readEncoder() and setMotorSpeed() wrapper functions if using 
-    different motor controller or encoder method.
+    可以通过一组简单的串口命令来控制差分机器人并接收回传的传感器与里程计
+    数据，默认使用的是 Arduino Mega + Pololu电机驱动模块，如果使用其他的
+    编码器或电机驱动需要重写readEncoder()与setMotorSpeed()函数
 
     Created for the Pi Robot Project: http://www.pirobot.org
     and the Home Brew Robotics Club (HBRC): http://hbrobotics.org
@@ -45,10 +42,12 @@
  *  POSSIBILITY OF SUCH DAMAGE.
  *********************************************************************/
 
+//是否启用底盘控制器
 #define USE_BASE      // Enable the base controller code
 //#undef USE_BASE     // Disable the base controller code
 
 /* Define the motor controller and encoder library you are using */
+//启用基座控制器需要设置的电机驱动以及编码器驱动
 #ifdef USE_BASE
    /* The Pololu VNH5019 dual motor driver shield */
    //#define POLOLU_VNH5019
@@ -66,15 +65,19 @@
    #define L298_MOTOR_DRIVER
 #endif
 
-#define USE_SERVOS  // Enable use of PWM servos as defined in servos.h
-//#undef USE_SERVOS     // Disable use of PWM servos
+//是否启用舵机
+//#define USE_SERVOS  // Enable use of PWM servos as defined in servos.h
+#undef USE_SERVOS     // Disable use of PWM servos
 
 /* Serial port baud rate */
+//波特率
 #define BAUDRATE     57600
 
 /* Maximum PWM signal */
+//最大PWM值
 #define MAX_PWM        255
 
+//根据Arduino型号来包含对应的头文件
 #if defined(ARDUINO) && ARDUINO >= 100
 #include "Arduino.h"
 #else
@@ -82,39 +85,43 @@
 #endif
 
 /* Include definition of serial commands */
+//串口命令
 #include "commands.h"
 
 /* Sensor functions */
+//传感器文件
 #include "sensors.h"
 
 /* Include servo support if required */
+//如果启用舵机，需要包含的头文件
 #ifdef USE_SERVOS
    #include <Servo.h>
    #include "servos.h"
 #endif
 
+//如果启用基座控制器需要包含的头文件
 #ifdef USE_BASE
   /* Motor driver function definitions */
-  #include "motor_driver.h"
+  #include "motor_driver.h"     //电机驱动
 
   /* Encoder driver function definitions */
-  #include "encoder_driver.h"
+  #include "encoder_driver.h"   //编码器驱动
 
   /* PID parameters and functions */
-  #include "diff_controller.h"
+  #include "diff_controller.h"  //PID调速
 
   /* Run the PID loop at 30 times per second */
-  #define PID_RATE           30     // Hz
+  #define PID_RATE           30     // Hz 调速频率
 
   /* Convert the rate into an interval */
-  const int PID_INTERVAL = 1000 / PID_RATE;
+  const int PID_INTERVAL = 1000 / PID_RATE; //调速周期
   
   /* Track the next time we make a PID calculation */
   unsigned long nextPID = PID_INTERVAL;
 
   /* Stop the robot if it hasn't received a movement command
    in this number of milliseconds */
-  #define AUTO_STOP_INTERVAL 2000
+  #define AUTO_STOP_INTERVAL 5000   //自动结束时间(可按需修改)
   long lastMotorCommand = AUTO_STOP_INTERVAL;
 #endif
 
@@ -139,6 +146,7 @@ long arg1;
 long arg2;
 
 /* Clear the current command parameters */
+//重置命令
 void resetCommand() {
   cmd = NULL;
   memset(argv1, 0, sizeof(argv1));
@@ -150,6 +158,7 @@ void resetCommand() {
 }
 
 /* Run a command.  Commands are defined in commands.h */
+//执行串口命令
 int runCommand() {
   int i = 0;
   char *p = argv1;
@@ -159,83 +168,84 @@ int runCommand() {
   arg2 = atoi(argv2);
   
   switch(cmd) {
-  case GET_BAUDRATE:
-    Serial.println(BAUDRATE);
-    break;
-  case ANALOG_READ:
-    Serial.println(analogRead(arg1));
-    break;
-  case DIGITAL_READ:
-    Serial.println(digitalRead(arg1));
-    break;
-  case ANALOG_WRITE:
-    analogWrite(arg1, arg2);
-    Serial.println("OK"); 
-    break;
-  case DIGITAL_WRITE:
-    if (arg2 == 0) digitalWrite(arg1, LOW);
-    else if (arg2 == 1) digitalWrite(arg1, HIGH);
-    Serial.println("OK"); 
-    break;
-  case PIN_MODE:
-    if (arg2 == 0) pinMode(arg1, INPUT);
-    else if (arg2 == 1) pinMode(arg1, OUTPUT);
-    Serial.println("OK");
-    break;
-  case PING:
-    Serial.println(Ping(arg1));
-    break;
-#ifdef USE_SERVOS
-  case SERVO_WRITE:
-    servos[arg1].setTargetPosition(arg2);
-    Serial.println("OK");
-    break;
-  case SERVO_READ:
-    Serial.println(servos[arg1].getServo().read());
-    break;
-#endif
-    
-#ifdef USE_BASE
-  case READ_ENCODERS:
-    Serial.print(readEncoder(LEFT));
-    Serial.print(" ");
-    Serial.println(readEncoder(RIGHT));
-    break;
-   case RESET_ENCODERS:
-    resetEncoders();
-    resetPID();
-    Serial.println("OK");
-    break;
-  case MOTOR_SPEEDS:
-    /* Reset the auto stop timer */
-    lastMotorCommand = millis();
-    if (arg1 == 0 && arg2 == 0) {
-      setMotorSpeeds(0, 0);
-      resetPID();
-      moving = 0;
-    }
-    else moving = 1;
-    leftPID.TargetTicksPerFrame = arg1;
-    rightPID.TargetTicksPerFrame = arg2;
-    Serial.println("OK"); 
-    break;
-  case UPDATE_PID:
-    while ((str = strtok_r(p, ":", &p)) != '\0') {
-       pid_args[i] = atoi(str);
-       i++;
-    }
-    Kp = pid_args[0];
-    Kd = pid_args[1];
-    Ki = pid_args[2];
-    Ko = pid_args[3];
-    Serial.println("OK");
-    break;
-#endif
-  default:
-    Serial.println("Invalid Command");
-    break;
+    case GET_BAUDRATE:
+        Serial.println(BAUDRATE);
+        break;
+    case ANALOG_READ:
+        Serial.println(analogRead(arg1));
+        break;
+    case DIGITAL_READ:
+        Serial.println(digitalRead(arg1));
+        break;
+    case ANALOG_WRITE:
+        analogWrite(arg1, arg2);
+        Serial.println("OK"); 
+        break;
+    case DIGITAL_WRITE:
+        if (arg2 == 0) digitalWrite(arg1, LOW);
+        else if (arg2 == 1) digitalWrite(arg1, HIGH);
+        Serial.println("OK"); 
+        break;
+    case PIN_MODE:
+        if (arg2 == 0) pinMode(arg1, INPUT);
+        else if (arg2 == 1) pinMode(arg1, OUTPUT);
+        Serial.println("OK");
+        break;
+    case PING:
+        Serial.println(Ping(arg1));
+        break;
+    #ifdef USE_SERVOS
+    case SERVO_WRITE:
+        servos[arg1].setTargetPosition(arg2);
+        Serial.println("OK");
+        break;
+    case SERVO_READ:
+        Serial.println(servos[arg1].getServo().read());
+        break;
+    #endif
+        
+    #ifdef USE_BASE
+    case READ_ENCODERS:
+        Serial.print(readEncoder(LEFT));
+        Serial.print(" ");
+        Serial.println(readEncoder(RIGHT));
+        break;
+    case RESET_ENCODERS:
+        resetEncoders();
+        resetPID();
+        Serial.println("OK");
+        break;
+    case MOTOR_SPEEDS:
+        /* Reset the auto stop timer */
+        lastMotorCommand = millis();
+        if (arg1 == 0 && arg2 == 0) {
+        setMotorSpeeds(0, 0);
+        resetPID();
+        moving = 0;
+        }
+        else moving = 1;
+        leftPID.TargetTicksPerFrame = arg1;
+        rightPID.TargetTicksPerFrame = arg2;
+        Serial.println("OK"); 
+        break;
+    case UPDATE_PID:
+        while ((str = strtok_r(p, ":", &p)) != '\0') {
+        pid_args[i] = atoi(str);
+        i++;
+        }
+        Kp = pid_args[0];
+        Kd = pid_args[1];
+        Ki = pid_args[2];
+        Ko = pid_args[3];
+        Serial.println("OK");
+        break;
+    #endif
+    default:
+        Serial.println("Invalid Command");
+        break;
   }
 }
+
 
 /* Setup function--runs once at startup. */
 void setup() {
@@ -264,7 +274,10 @@ void setup() {
     // enable PCINT1 and PCINT2 interrupt in the general interrupt mask
     PCICR |= (1 << PCIE1) | (1 << PCIE2);
   #endif
+
+  //初始化电机控制
   initMotorController();
+  //重置 PID
   resetPID();
 #endif
 
@@ -280,11 +293,13 @@ void setup() {
   #endif
 }
 
+
 /* Enter the main loop.  Read and parse input from the serial port
    and run any valid commands. Run a PID calculation at the target
    interval and check for auto-stop conditions.
 */
 void loop() {
+  //读取串口命令
   while (Serial.available() > 0) {
     
     // Read the next character

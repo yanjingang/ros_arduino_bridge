@@ -17,8 +17,8 @@
 #define SERVO_WRITE    's'  // 设置伺服的位置 -弧度(0-3.14)
 #define SERVO_READ     't'  // 读伺服的位置
 #define UPDATE_PID     'u'  
-#define DIGITAL_WRITE  'w'  // 向数字引脚发送低 (0) 或高 (1) 信号
-#define ANALOG_WRITE   'x'  
+#define DIGITAL_WRITE  'w'  // 向数字引脚发送低(0)或高(1)信号
+#define ANALOG_WRITE   'x'  // 向模拟引脚发送模拟信号
 #define LEFT            0
 #define RIGHT           1
 

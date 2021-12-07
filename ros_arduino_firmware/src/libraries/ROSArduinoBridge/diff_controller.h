@@ -1,4 +1,6 @@
-/* Functions and type-defs for PID control.
+/* 
+   PID控制代码
+   Functions and type-defs for PID control.
 
    Taken mostly from Mike Ferguson's ArbotiX code which lives at:
    
@@ -127,4 +129,3 @@ void updatePID() {
   /* Set the motor speeds accordingly */
   setMotorSpeeds(leftPID.output, rightPID.output);
 }
-

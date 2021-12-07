@@ -1,4 +1,5 @@
 /* *************************************************************
+   编码器的实现代码
    Encoder definitions
    
    Add an "#ifdef" block to this file to include support for
@@ -79,4 +80,3 @@ void resetEncoders() {
 }
 
 #endif
-

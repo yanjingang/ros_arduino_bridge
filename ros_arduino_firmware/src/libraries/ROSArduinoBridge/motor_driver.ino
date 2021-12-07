@@ -1,4 +1,5 @@
 /***************************************************************
+   马达驱动实现代码，根据预定义选择不同的驱动板库，在这里我使用了L298P，所以需要自己实现一个新的驱动库，后面会介绍
    Motor driver definitions
    
    Add a "#elif defined" block to this file to include support

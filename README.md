@@ -269,6 +269,7 @@ or
     $ cd ~/catkin_ws
     $ catkin_make
 
+
 提供的 Arduino 库称为 ROSArduinoBridge，位于 ros_arduino_firmware/src/libraries/ROSArduinoBridge 中。此示例库有特殊的硬件要求，但也可以通过关闭BaseController（如本文档末尾的 NOTES 部分所述）与其他 Arduino 类型板（例如 Uno）一起使用。
 
 
@@ -315,6 +316,7 @@ m 20 20
 
 
 **2.7 测试您的接线连接**
+
 在差动驱动机器人上，电机连接到极性相反的电机控制器端子。类似地，来自编码器的 A/B 引线以相反的方式相互连接。但是，您仍然需要确保 
 (a) 在给定正电机速度时车轮向前移动，以及 (b) 当车轮向前移动时编码器计数增加。
 
@@ -339,6 +341,7 @@ m 20 20
 * ROS端修改配置文件。
 
 **3.1 配置 ROSArduinoBridge 节点**
+
 编辑ROSArduinoBridge.ino文件，打开底盘控制、L298电机驱动，关闭舵机
 <pre>
 //是否启用底盘控制器
@@ -371,6 +374,7 @@ m 20 20
 
 
 **3.2 配置 ros_arduino_python 节点**
+
 现在您的 Arduino 正在运行所需的示例，您可以在您的 PC 上配置 ROS 端。您可以通过编辑目录 ros_arduino_python/config 中的 YAML 文件来定义机器人的尺寸、PID 参数和传感器配置。所以首先进入该目录：
 
     $ roscd ros_arduino_python/config
@@ -460,6 +464,7 @@ PID 参数设置起来比较棘手。您可以从示例值开始，但请确保�
 
 
 **3.3 启动 ros_arduino_python 节点**
+
 查看 ros_arduino_python/launch 目录中的启动文件 arduino.launch。如您所见，它指向一个名为 my_arduino_params.yaml 的配置文件。如果您将配置文件命名为不同的名称，请更改启动文件中的名称。
 
 连接 Arduino 并运行 MegaRobogaiaPololu 草图后，使用您的参数启动 ros_arduino_python 节点：
@@ -482,6 +487,7 @@ etc
 如果你的机器人上有任何 Ping 声纳传感器并且你在你的配置文件中定义了它们，它们应该开始闪烁以表明你已经建立了连接。
 
 **3.4 查看传感器数据**
+
 要查看汇总的传感器数据，请回显传感器状态主题：
 
     $ rostopic echo /arduino/sensor_state
@@ -500,6 +506,7 @@ etc
 
 
 **3.5 发送 Twist 命令和查看 odom 里程计数据**
+
 将您的机器人放在块上，然后尝试发布 Twist 命令：
 
     $ rostopic pub -1 /cmd_vel geometry_msgs/Twist '{ angular: {z: 0.5} }'
@@ -519,6 +526,7 @@ or
    $ rxplot -p 60 /odom/pose/pose/position/x:y, /odom/twist/twist/linear/x, /odom/twist/twist/angular/z
 
 **3.6 ROS服务 ROS Services**
+
 ros_arduino_python 包还定义了一些 ROS 服务，如下所示：
 
 **digital_set_direction** - 设置数字引脚的方向
@@ -549,6 +557,7 @@ where pin is the pin number and value is 0 for LOW and 1 for HIGH.
 
 
 **3.7 使用板载车轮编码器计数器（仅限 Arduino Uno）**
+
 该固件支持 Arduino Uno 的板载车轮编码器计数器。这允许将车轮编码器直接连接到 Arduino 板，而无需任何额外的车轮编码器计数器设备（例如 RoboGaia 编码器屏蔽）。
 
 为了速度，代码直接寻址特定的 Atmega328p 端口和中断，使此实现依赖于 Atmega328p（Arduino Uno）。（不过，它应该很容易适应其他板/AVR 芯片。）
@@ -571,7 +580,7 @@ where pin is the pin number and value is 0 for LOW and 1 for HIGH.
 编译更改并上传到您的控制器。
 
 **3.8 使用 L298 电机驱动器 Using L298 Motor driver**
------------------------
+
 L298电机驱动器和arduino板之间的接线在固件中的motor_driver.h中定义如下：
 
     #define RIGHT_MOTOR_BACKWARD 5

@@ -526,7 +526,7 @@ etc
 
 or
 
-   $ rxplot -p 60 /odom/pose/pose/position/x:y, /odom/twist/twist/linear/x, /odom/twist/twist/angular/z
+    $ rxplot -p 60 /odom/pose/pose/position/x:y, /odom/twist/twist/linear/x, /odom/twist/twist/angular/z
 
 **3.6 ROS服务 ROS Services**
 

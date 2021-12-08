@@ -124,7 +124,6 @@ class BaseController:
             # Read the encoders
             try:
                 left_enc, right_enc = self.arduino.get_encoder_counts()
-                print("get_encoder_counts: {} {}".format(left_enc, right_enc))
             except:
                 self.bad_encoder_count += 1
                 rospy.logerr("Encoder exception count: " + str(self.bad_encoder_count))

@@ -35,9 +35,9 @@
 
 * ros_arduino_msgs：     #消息定义包
 
-* ros_arduino_firmware： 固件包，更新到Arduino（执行运动指令并发送电机编码器数据）
+* ros_arduino_firmware： 固件包，更新到Arduino（执行运动指令、发送电机编码器数据，通过serial与上位机通讯）
 
-* ros_arduino_python：   #ROS相关的Python包，用于上位机，树莓派等开发板或电脑等（监听/cmd_vel，并将电机编码器数据转换为里程计数据发送到/odom）
+* ros_arduino_python：   #ROS相关的Python包，用于上位机，树莓派等开发板或电脑等（监听/cmd_vel并转换为移动指令下发给电机；将电机编码器数据转换为里程计数据发到/odom）
 
 
 **1.4 文件结构：**

@@ -10,7 +10,7 @@
 #define GET_BAUDRATE   'b'  // 获取固件波特率
 #define PIN_MODE       'c'  // 设置引脚模式（0 input, 1 output）
 #define DIGITAL_READ   'd'  // 获取数字引脚上的读数
-#define READ_ENCODERS  'e'  // 获取编码器计数
+#define READ_ENCODERS  'e'  // 获取电机编码器计数
 #define MOTOR_SPEEDS   'm'  // 以指定的速度移动机器人
 #define PING           'p'  // 
 #define RESET_ENCODERS 'r'

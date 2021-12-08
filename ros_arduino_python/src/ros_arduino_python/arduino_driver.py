@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+# coding=utf-8
 """
     A Python driver for the Arduino microcontroller running the
     ROSArduinoBridge firmware.
@@ -98,7 +98,7 @@ class Arduino:
         ''' This command should not be used on its own: it is called by the execute commands
             below in a thread safe manner.
         '''
-        self.port.write(cmd + '\r')
+        self.port.write((cmd + '\r').encode())
 
     def recv(self, timeout=0.5):
         timeout = min(timeout, self.timeout)
@@ -110,7 +110,7 @@ class Arduino:
         value = ''
         attempts = 0
         while c != '\r':
-            c = self.port.read(1)
+            c = self.port.read(1).decode()
             value += c
             attempts += 1
             if attempts * self.interCharTimeout > timeout:
@@ -161,19 +161,20 @@ class Arduino:
         attempts = 0
 
         try:
-            self.port.write(cmd + '\r')
+            self.port.write((cmd + '\r').encode())
             value = self.recv(self.timeout)
             while attempts < ntries and (value == '' or value == 'Invalid Command' or value == None):
                 try:
                     self.port.flushInput()
-                    self.port.write(cmd + '\r')
+                    self.port.write((cmd + '\r').encode())
                     value = self.recv(self.timeout)
                 except:
-                    print("Exception executing command: " + cmd)
+                    print("Exception executing cmd: " + cmd)
                 attempts += 1
         except:
             self.mutex.release()
-            print("Exception executing command: " + cmd)
+            print("Exception executing command1: " + cmd)
+            traceback.print_exc(file=sys.stdout)
             value = None
 
         self.mutex.release()
@@ -193,24 +194,24 @@ class Arduino:
         attempts = 0
 
         try:
-            self.port.write(cmd + '\r')
+            self.port.write((cmd + '\r').encode())
             values = self.recv_array()
             while attempts < ntries and (values == '' or values == 'Invalid Command' or values == [] or values == None):
                 try:
                     self.port.flushInput()
-                    self.port.write(cmd + '\r')
+                    self.port.write((cmd + '\r').encode())
                     values = self.recv_array()
                 except:
-                    print("Exception executing command: " + cmd)
+                    print("Exception executing command2: " + cmd)
                 attempts += 1
         except:
             self.mutex.release()
-            print("Exception executing command: " + cmd)
+            print("Exception executing command3: " + cmd)
             raise SerialException
             return []
 
         try:
-            values = map(int, values)
+            values = list(map(int, values))
         except:
             values = []
 
@@ -231,15 +232,15 @@ class Arduino:
         attempts = 0
 
         try:
-            self.port.write(cmd + '\r')
+            self.port.write((cmd + '\r').encode())
             ack = self.recv(self.timeout)
             while attempts < ntries and (ack == '' or ack == 'Invalid Command' or ack == None):
                 try:
                     self.port.flushInput()
-                    self.port.write(cmd + '\r')
+                    self.port.write((cmd + '\r').encode())
                     ack = self.recv(self.timeout)
                 except:
-                    print("Exception executing command: " + cmd)
+                    print("Exception executing command4: " + cmd)
             attempts += 1
         except:
             self.mutex.release()

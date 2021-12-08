@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# coding=utf-8
 
 """
     A ROS Node for the Arduino microcontroller
@@ -106,8 +107,9 @@ class ArduinoROS():
         self.mySensors = list()
 
         sensor_params = rospy.get_param("~sensors", dict({}))
-
-        for name, params in sensor_params.iteritems():
+        #print(sensor_params)
+        #for name, params in sensor_params.iteritems():
+        for name, params in sensor_params.items():
             # Set the direction to input if not specified
             try:
                 params['direction']

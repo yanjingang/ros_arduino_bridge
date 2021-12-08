@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# coding=utf-8
 
 """
     A base controller class for the Arduino microcontroller
@@ -23,7 +24,7 @@
 import roslib; roslib.load_manifest('ros_arduino_python')
 import rospy
 import os
-
+import sys, traceback
 from math import sin, cos, pi
 from geometry_msgs.msg import Quaternion, Twist, Pose
 from nav_msgs.msg import Odometry
@@ -126,6 +127,7 @@ class BaseController:
             except:
                 self.bad_encoder_count += 1
                 rospy.logerr("Encoder exception count: " + str(self.bad_encoder_count))
+                traceback.print_exc(file=sys.stdout)
                 return
                             
             dt = now - self.then

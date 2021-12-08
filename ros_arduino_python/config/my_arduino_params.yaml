@@ -18,7 +18,7 @@ base_frame: base_footprint #base_frame 设置
 
 # === Robot drivetrain parameters
 wheel_diameter: 0.065    # 轮胎直径
-wheel_track: 0.21        # 两个轮胎间距
+wheel_track: 0.11        # 两个轮胎间距
 encoder_resolution: 3120 # 编码器精度(一圈的脉冲数 * 倍频 * 减速比)
 #gear_reduction: 1.0      # 减速比
 #motors_reversed: True    # 转向取反

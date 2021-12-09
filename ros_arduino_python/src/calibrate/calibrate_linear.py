@@ -50,28 +50,35 @@ class CalibrateLinear():
             move_cmd = Twist()
             if self.start_test:
                 # Get the current position from the tf transform between the odom and base frames
+                # 获取当前的位置信息
                 self.position = self.get_position()
                 # Compute the Euclidean distance from the target point
+                # 计算当前位置与起始位置的距离
                 distance = sqrt(pow((self.position.x - x_start), 2) +
                                 pow((self.position.y - y_start), 2))
                 # Correct the estimated distance by the correction factor
                 distance *= self.odom_linear_scale_correction
                 # How close are we?
+                # 计算与目标位置的距离
                 error = distance - self.test_distance
                 # Are we close enough?
+                # 如果已经到达目标位置，则停止
                 if not self.start_test or abs(error) < self.tolerance:
                     self.start_test = False
                     params = False
                     rospy.loginfo(params)
                 else:
                     # If not, move in the appropriate direction
+                    # 如果还没有到达，则继续前进，如果已经超出了目标位置，则控制电机反转，退回
                     move_cmd.linear.x = copysign(self.speed, -1 * error)
             else:
                 self.position = self.get_position()
-                x_start = self.position.x
-                y_start = self.position.y
+                x_start = self.position.x   #设定起始位置的x坐标
+                y_start = self.position.y   #设定起始位置的y坐标
+            # 发布控制Twist消息
             self.cmd_vel.publish(move_cmd)
             r.sleep()
+            
         # Stop the robot
         self.cmd_vel.publish(Twist())
 

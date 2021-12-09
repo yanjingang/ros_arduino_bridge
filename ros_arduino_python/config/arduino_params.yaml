@@ -7,7 +7,7 @@ port: /dev/ttyACM0
 baud: 57600
 timeout: 0.1
 
-rate: 50
+rate: 50  # 轮询速率50hz
 sensorstate_rate: 10
 
 use_base_controller: False

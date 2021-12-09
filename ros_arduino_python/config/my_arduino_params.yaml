@@ -16,7 +16,7 @@ base_controller_rate: 10
 # For a robot that uses base_footprint, change base_frame to base_footprint
 base_frame: base_footprint #base_frame 设置
 
-# === Robot drivetrain parameters
+# === 传动系统参数 Robot drivetrain parameters
 wheel_diameter: 0.065    # 轮胎直径
 wheel_track: 0.11        # 两个轮胎间距
 encoder_resolution: 3120 # 编码器精度(一圈的脉冲数 * 倍频 * 减速比)

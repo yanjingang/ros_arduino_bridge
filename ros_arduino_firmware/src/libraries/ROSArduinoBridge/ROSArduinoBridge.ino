@@ -58,10 +58,10 @@
    /* The RoboGaia encoder shield */
    //#define ROBOGAIA
    
-   /* Encoders directly attached to Arduino board */
+   /* 电机编码器信号处理 Encoders directly attached to Arduino board */
    #define ARDUINO_ENC_COUNTER
 
-   /* L298 Motor driver*/
+   /* L298电机驱动版 Motor driver*/
    #define L298_MOTOR_DRIVER
 #endif
 

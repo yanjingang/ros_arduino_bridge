@@ -44,7 +44,7 @@ class ArduinoROS():
         self.port = rospy.get_param("~port", "/dev/ttyACM0")
         self.baud = int(rospy.get_param("~baud", 57600))
         self.timeout = rospy.get_param("~timeout", 0.5)
-        self.base_frame = rospy.get_param("~base_frame", 'base_link')
+        self.base_frame = rospy.get_param("~base_frame", 'base_footprint')
         self.motors_reversed = rospy.get_param("~motors_reversed", False)
         # Overall loop rate: should be faster than fastest sensor rate
         self.rate = int(rospy.get_param("~rate", 50))

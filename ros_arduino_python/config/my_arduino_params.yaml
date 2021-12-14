@@ -13,17 +13,17 @@ base_controller_rate: 10
 # For a robot that uses base_footprint, change base_frame to base_footprint
 base_frame: base_footprint #base_frame 设置
 
-# === 传动系统参数 Robot drivetrain parameters
-wheel_diameter: 0.05    # 轮胎直径
-wheel_track: 0.11        # 两个轮胎间距
+# === 電機参数 Robot drivetrain parameters
+wheel_diameter: 0.065    # 轮胎直径
+wheel_track: 0.156        # 两个轮胎间距
 encoder_resolution: 8384 # 编码器精度(一圈的脉冲数 * 倍频 * 减速比)
-#gear_reduction: 1.0      # 减速比
+gear_reduction: 9.6      # 减速比
 #motors_reversed: True    # 转向取反
 
 # === PID parameters PID参数，控制轮速，修改到车子能够根据命令走直线且速度稳定
-Kp: 4
-Kd: 2
-Ki: 2
+Kp: 4 #0.25
+Kd: 2 #0
+Ki: 2 #0.15
 Ko: 50
 accel_limit: 1.0
 

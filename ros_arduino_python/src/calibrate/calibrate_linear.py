@@ -52,15 +52,18 @@ class CalibrateLinear():
                 # Get the current position from the tf transform between the odom and base frames
                 # 获取当前的位置信息
                 self.position = self.get_position()
+                print(self.position)
                 # Compute the Euclidean distance from the target point
                 # 计算当前位置与起始位置的距离
                 distance = sqrt(pow((self.position.x - x_start), 2) +
                                 pow((self.position.y - y_start), 2))
+                print(distance)
                 # Correct the estimated distance by the correction factor
                 distance *= self.odom_linear_scale_correction
                 # How close are we?
                 # 计算与目标位置的距离
                 error = distance - self.test_distance
+                print(error)
                 # Are we close enough?
                 # 如果已经到达目标位置，则停止
                 if not self.start_test or abs(error) < self.tolerance:
@@ -76,6 +79,7 @@ class CalibrateLinear():
                 x_start = self.position.x   #设定起始位置的x坐标
                 y_start = self.position.y   #设定起始位置的y坐标
             # 发布控制Twist消息
+            print(move_cmd)
             self.cmd_vel.publish(move_cmd)
             r.sleep()
 

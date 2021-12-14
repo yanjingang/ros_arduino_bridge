@@ -46,6 +46,7 @@ class CalibrateLinear():
         y_start = self.position.y
         move_cmd = Twist()
         while not rospy.is_shutdown():
+            print('---------------')
             # Stop the robot by default
             move_cmd = Twist()
             if self.start_test:

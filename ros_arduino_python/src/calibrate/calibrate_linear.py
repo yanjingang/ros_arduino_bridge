@@ -26,7 +26,7 @@ class CalibrateLinear():
         # Set the distance to travel
         # 设置移动距离
         self.test_distance = 1.0  # meters
-        self.speed = 0.5  # 米/每秒 meters per second
+        self.speed = 1  # 米/每秒 meters per second
         self.tolerance = 0.01  # 容忍误差 meters
         self.odom_linear_scale_correction = 1.0
         self.start_test = True

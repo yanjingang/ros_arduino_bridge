@@ -54,12 +54,15 @@ class BaseController:
         self.motors_reversed = rospy.get_param("~motors_reversed", False)
         
         # Set up PID parameters and check for missing values
+        # 设置PID参数并检查缺少的值
         self.setup_pid(pid_params)
             
         # How many encoder ticks are there per meter?
+        # 每米有多少个编码器刻度
         self.ticks_per_meter = self.encoder_resolution * self.gear_reduction  / (self.wheel_diameter * pi)
         
         # What is the maximum acceleration we will tolerate when changing wheel speeds?
+        # 当改变车轮速度时，我们能承受的最大加速度是多少
         self.max_accel = self.accel_limit * self.ticks_per_meter / self.rate
                 
         # Track how often we get a bad encoder count (if any)
@@ -139,13 +142,13 @@ class BaseController:
                 dright = 0
                 dleft = 0
             else:
-                dright = (right_enc - self.enc_right) / self.ticks_per_meter
+                dright = (right_enc - self.enc_right) / self.ticks_per_meter    # 编码器刻度差/每米的刻度=走了多远
                 dleft = (left_enc - self.enc_left) / self.ticks_per_meter
 
-            self.enc_right = right_enc
+            self.enc_right = right_enc  #最新编码器刻度值
             self.enc_left = left_enc
             
-            dxy_ave = (dright + dleft) / 2.0
+            dxy_ave = (dright + dleft) / 2.0    # 两轮平均移动距离
             dth = (dright - dleft) / self.wheel_track
             vxy = dxy_ave / dt
             vth = dth / dt

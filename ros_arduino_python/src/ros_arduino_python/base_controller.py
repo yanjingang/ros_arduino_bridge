@@ -211,8 +211,10 @@ class BaseController:
                     self.v_right = self.v_des_right
             
             # Set motor speeds in encoder ticks per PID loop
+            # 设置马达速度
             if not self.stopped:
                 self.arduino.drive(self.v_left, self.v_right)
+                print("set motor speeds: {} {}".format(self.v_left, self.v_right))
                 
             self.t_next = now + self.t_delta
             

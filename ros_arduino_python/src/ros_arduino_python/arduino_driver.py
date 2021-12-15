@@ -99,6 +99,7 @@ class Arduino:
             below in a thread safe manner.
         '''
         self.port.write((cmd + '\r').encode())
+        print("send cmd: {}".format(cmd))
 
     def recv(self, timeout=0.5):
         timeout = min(timeout, self.timeout)
@@ -162,6 +163,7 @@ class Arduino:
 
         try:
             self.port.write((cmd + '\r').encode())
+            print("execute cmd: {}".format(cmd))
             value = self.recv(self.timeout)
             while attempts < ntries and (value == '' or value == 'Invalid Command' or value == None):
                 try:
@@ -195,6 +197,7 @@ class Arduino:
 
         try:
             self.port.write((cmd + '\r').encode())
+            print("execute_array cmd: {}".format(cmd))
             values = self.recv_array()
             while attempts < ntries and (values == '' or values == 'Invalid Command' or values == [] or values == None):
                 try:
@@ -233,6 +236,7 @@ class Arduino:
 
         try:
             self.port.write((cmd + '\r').encode())
+            print("execute_ack cmd: {}".format(cmd))
             ack = self.recv(self.timeout)
             while attempts < ntries and (ack == '' or ack == 'Invalid Command' or ack == None):
                 try:

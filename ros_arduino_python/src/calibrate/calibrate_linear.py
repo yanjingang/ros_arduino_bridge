@@ -12,19 +12,26 @@ import tf
 
 class CalibrateLinear():
     def __init__(self):
+        # 1.节点初始化
         # Give the node a name
         rospy.init_node('calibrate_linear', anonymous=False)
         # Set rospy to execute a shutdown function when terminating the script
         rospy.on_shutdown(self.shutdown)
+
+        # 2.参数配置
         # How fast will we check the odometry values?
+        # 检查odom的频率
         self.rate = 10
         r = rospy.Rate(self.rate)
         # Set the distance to travel
+        # 设置移动距离
         self.test_distance = 1.0  # meters
-        self.speed = 1.0  # meters per second
+        self.speed = 1.0  # 米/每秒 meters per second
         self.tolerance = 0.01  # meters
         self.odom_linear_scale_correction = 1.0
         self.start_test = True
+
+        # 3.topic pub/sub初始化
         # Publisher to control the robot's speed
         self.cmd_vel = rospy.Publisher('/cmd_vel', Twist, queue_size=5)
         # The base frame is base_footprint for the TurtleBot but base_link for Pi Robot
@@ -36,11 +43,13 @@ class CalibrateLinear():
         # Give tf some time to fill its buffer
         rospy.sleep(2)
         # Make sure we see the odom and base frames
-        self.tf_listener.waitForTransform(
-            self.odom_frame, self.base_frame, rospy.Time(), rospy.Duration(60.0))
+        self.tf_listener.waitForTransform(self.odom_frame, self.base_frame, rospy.Time(), rospy.Duration(60.0))
+
+        # 4.调出rqt_reconfigure来控制测试
         rospy.loginfo("Bring up rqt_reconfigure to control the test.")
         self.position = Point()
         # Get the starting position from the tf transform between the odom and base frames
+        # 从 odom 和 base 帧之间的 tf变换中获取起始位置
         self.position = self.get_position()
         x_start = self.position.x
         y_start = self.position.y
@@ -48,6 +57,7 @@ class CalibrateLinear():
         while not rospy.is_shutdown():
             print('---------------')
             # Stop the robot by default
+            # 默认停止机器人
             move_cmd = Twist()
             if self.start_test:
                 # Get the current position from the tf transform between the odom and base frames
@@ -56,8 +66,7 @@ class CalibrateLinear():
                 print(self.position)
                 # Compute the Euclidean distance from the target point
                 # 计算当前位置与起始位置的距离
-                distance = sqrt(pow((self.position.x - x_start), 2) +
-                                pow((self.position.y - y_start), 2))
+                distance = sqrt(pow((self.position.x - x_start), 2) + pow((self.position.y - y_start), 2))
                 print(distance)
                 # Correct the estimated distance by the correction factor
                 distance *= self.odom_linear_scale_correction
@@ -89,9 +98,9 @@ class CalibrateLinear():
 
     def get_position(self):
         # Get the current transform between the odom and base frames
+        # 获取odom和base帧之间的当前变换
         try:
-            (trans, rot) = self.tf_listener.lookupTransform(
-                self.odom_frame, self.base_frame, rospy.Time(0))
+            (trans, rot) = self.tf_listener.lookupTransform(self.odom_frame, self.base_frame, rospy.Time(0))
         except (tf.Exception, tf.ConnectivityException, tf.LookupException):
             rospy.loginfo("TF Exception")
             return
@@ -99,6 +108,7 @@ class CalibrateLinear():
 
     def shutdown(self):
         # Always stop the robot when shutting down the node
+        # 关闭节点前先停止机器人运动
         rospy.loginfo("Stopping the robot...")
         self.cmd_vel.publish(Twist())
         rospy.sleep(1)

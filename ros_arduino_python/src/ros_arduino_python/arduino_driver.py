@@ -178,7 +178,7 @@ class Arduino:
             print("Exception executing command1: " + cmd)
             traceback.print_exc(file=sys.stdout)
             value = None
-
+        
         self.mutex.release()
         return int(value)
 
@@ -198,7 +198,6 @@ class Arduino:
         try:
             self.port.write((cmd + '\r').encode())
             values = self.recv_array()
-            print("execute_array cmd: {}  recv: {}".format(cmd, values))
             while attempts < ntries and (values == '' or values == 'Invalid Command' or values == [] or values == None):
                 try:
                     self.port.flushInput()
@@ -217,6 +216,8 @@ class Arduino:
             values = list(map(int, values))
         except:
             values = []
+        
+        print("execute_array cmd: {}  recv: {}".format(cmd, values))
 
         self.mutex.release()
         return values

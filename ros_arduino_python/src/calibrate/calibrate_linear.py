@@ -26,8 +26,8 @@ class CalibrateLinear():
         # Set the distance to travel
         # 设置移动距离
         self.test_distance = 1.0  # meters
-        self.speed = 1.0  # 米/每秒 meters per second
-        self.tolerance = 0.01  # meters
+        self.speed = 0.5  # 米/每秒 meters per second
+        self.tolerance = 0.01  # 容忍误差 meters
         self.odom_linear_scale_correction = 1.0
         self.start_test = True
 
@@ -55,11 +55,11 @@ class CalibrateLinear():
         y_start = self.position.y
         move_cmd = Twist()
         while not rospy.is_shutdown():
-            print('---------------')
             # Stop the robot by default
             # 默认停止机器人
             move_cmd = Twist()
             if self.start_test:
+                print('---------------')
                 # Get the current position from the tf transform between the odom and base frames
                 # 获取当前的位置信息
                 self.position = self.get_position()
@@ -69,6 +69,7 @@ class CalibrateLinear():
                 distance = sqrt(pow((self.position.x - x_start), 2) + pow((self.position.y - y_start), 2))
                 print(distance)
                 # Correct the estimated distance by the correction factor
+                # 用修正系数修正估计距离
                 distance *= self.odom_linear_scale_correction
                 # How close are we?
                 # 计算与目标位置的距离
@@ -76,7 +77,7 @@ class CalibrateLinear():
                 print(error)
                 # Are we close enough?
                 # 如果已经到达目标位置，则停止
-                if not self.start_test or abs(error) < self.tolerance:
+                if not self.start_test or abs(error) < self.tolerance or error > 0:
                     self.start_test = False
                     params = False
                     rospy.loginfo(params)
@@ -89,7 +90,7 @@ class CalibrateLinear():
                 x_start = self.position.x   #设定起始位置的x坐标
                 y_start = self.position.y   #设定起始位置的y坐标
             # 发布控制Twist消息
-            print(move_cmd)
+            #print(move_cmd)
             self.cmd_vel.publish(move_cmd)
             r.sleep()
 

@@ -304,6 +304,7 @@ class Arduino:
         right_ticks_per_loop  = int(right_revs_per_second * self.encoder_resolution * self.PID_INTERVAL * self.gear_reduction)
 
         self.drive(right_ticks_per_loop , left_ticks_per_loop )
+        print("drive_m_per_s speeds: {} {}".format(right_ticks_per_loop, left_ticks_per_loop))
 
     def stop(self):
         ''' Stop both motors.

@@ -7,43 +7,43 @@
    http://vanadium-ros-pkg.googlecode.com/svn/trunk/arbotix/
 */
 
-/* PID setpoint info For a Motor */
+/* 电机的PID设定信息 PID setpoint info For a Motor */
 typedef struct {
-  double TargetTicksPerFrame;    // target speed in ticks per frame
-  long Encoder;                  // encoder count
+  double TargetTicksPerFrame;    // 目标速度 target speed in ticks per frame
+  long Encoder;                  // 编码器计数 encoder count
   long PrevEnc;                  // last encoder count
 
   /*
   * Using previous input (PrevInput) instead of PrevError to avoid derivative kick,
   * see http://brettbeauregard.com/blog/2011/04/improving-the-beginner%E2%80%99s-pid-derivative-kick/
   */
-  int PrevInput;                // last input
+  int PrevInput;                // 最后输入 last input
   //int PrevErr;                   // last error
 
   /*
-  * Using integrated term (ITerm) instead of integrated error (Ierror),
+  * 使用积分项（ITerm）代替积分误差（Ierror） Using integrated term (ITerm) instead of integrated error (Ierror),
   * to allow tuning changes,
   * see http://brettbeauregard.com/blog/2011/04/improving-the-beginner%E2%80%99s-pid-tuning-changes/
   */
   //int Ierror;
   int ITerm;                    //integrated term
 
-  long output;                    // last motor setting
+  long output;                    // 最后电机设置 last motor setting
 }
 SetPointInfo;
 
 SetPointInfo leftPID, rightPID;
 
-/* PID Parameters */
+/* PID参数 PID Parameters */
 int Kp = 20;
 int Kd = 12;
 int Ki = 0;
 int Ko = 50;
 
-unsigned char moving = 0; // is the base in motion?
+unsigned char moving = 0; // 基地启动了吗？is the base in motion?
 
 /*
-* Initialize PID variables to zero to prevent startup spikes
+* 将PID变量初始化为零以防止启动峰值 Initialize PID variables to zero to prevent startup spikes
 * when turning PID on to start moving
 * In particular, assign both Encoder and PrevEnc the current encoder value
 * See http://brettbeauregard.com/blog/2011/04/improving-the-beginner%E2%80%99s-pid-initialization/
@@ -66,7 +66,7 @@ void resetPID(){
    rightPID.ITerm = 0;
 }
 
-/* PID routine to compute the next motor commands */
+/* 用于计算下一个电机指令的PID例程 PID routine to compute the next motor commands */
 void doPID(SetPointInfo * p) {
   long Perror;
   long output;
@@ -88,15 +88,15 @@ void doPID(SetPointInfo * p) {
   p->PrevEnc = p->Encoder;
 
   output += p->output;
-  // Accumulate Integral error *or* Limit output.
-  // Stop accumulating when output saturates
+  // 累积积分误差*或*限制输出 Accumulate Integral error *or* Limit output.
+  // 当输出饱和时停止累积 Stop accumulating when output saturates
   if (output >= MAX_PWM)
     output = MAX_PWM;
   else if (output <= -MAX_PWM)
     output = -MAX_PWM;
   else
   /*
-  * allow turning changes, see http://brettbeauregard.com/blog/2011/04/improving-the-beginner%E2%80%99s-pid-tuning-changes/
+  * 允许转弯更改 allow turning changes, see http://brettbeauregard.com/blog/2011/04/improving-the-beginner%E2%80%99s-pid-tuning-changes/
   */
     p->ITerm += Ki * Perror;
 
@@ -104,28 +104,28 @@ void doPID(SetPointInfo * p) {
   p->PrevInput = input;
 }
 
-/* Read the encoder values and call the PID routine */
+/* 读取编码器值并调用PID例程 Read the encoder values and call the PID routine */
 void updatePID() {
-  /* Read the encoders */
+  /* 读取编码器 Read the encoders */
   leftPID.Encoder = readEncoder(LEFT);
   rightPID.Encoder = readEncoder(RIGHT);
   
-  /* If we're not moving there is nothing more to do */
+  /* 如果我们不移动，就没什么可做的了 If we're not moving there is nothing more to do */
   if (!moving){
     /*
-    * Reset PIDs once, to prevent startup spikes,
+    * 重置PIDs一次，以防止启动峰值 Reset PIDs once, to prevent startup spikes,
     * see http://brettbeauregard.com/blog/2011/04/improving-the-beginner%E2%80%99s-pid-initialization/
-    * PrevInput is considered a good proxy to detect
-    * whether reset has already happened
+    * PrevInput被认为是一个很好的检测代理 PrevInput is considered a good proxy to detect
+    * 置是否已经发生 whether reset has already happened
     */
     if (leftPID.PrevInput != 0 || rightPID.PrevInput != 0) resetPID();
     return;
   }
 
-  /* Compute PID update for each motor */
+  /* 计算每个电机的PID更新 Compute PID update for each motor */
   doPID(&rightPID);
   doPID(&leftPID);
 
-  /* Set the motor speeds accordingly */
+  /* 相应地设置电机转速 Set the motor speeds accordingly */
   setMotorSpeeds(leftPID.output, rightPID.output);
 }

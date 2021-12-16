@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # coding=utf-8
 """
+    Arduino驱动类
     A Python driver for the Arduino microcontroller running the
     ROSArduinoBridge firmware.
 

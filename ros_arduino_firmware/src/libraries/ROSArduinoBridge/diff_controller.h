@@ -1,5 +1,5 @@
 /* 
-   PID控制代码
+   差分轮PID控制头文件
    Functions and type-defs for PID control.
 
    Taken mostly from Mike Ferguson's ArbotiX code which lives at:

@@ -2,6 +2,7 @@
 # coding=utf-8
 
 """
+    实际处理节点，由arduino.launch调用，可单独调用
     A ROS Node for the Arduino microcontroller
 
     Created for the Pi Robot Project: http://www.pirobot.org

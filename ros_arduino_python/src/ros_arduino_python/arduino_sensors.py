@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 """
+    Arduino传感器类
     Sensor class for the arudino_python package
     
     Created for the Pi Robot Project: http://www.pirobot.org

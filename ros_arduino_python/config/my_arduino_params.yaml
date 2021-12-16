@@ -1,3 +1,4 @@
+# 定义相关参数，端口，rate，PID，sensors等默认参数。由arduino.launch调用
 # arduino + 25ga370马达参数配置(12v 空转620rpm/分钟)
 
 port: /dev/ttyACM0

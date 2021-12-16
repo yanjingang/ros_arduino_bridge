@@ -1,5 +1,5 @@
 /* *************************************************************
-   编码器的实现代码
+   编码器驱动实现, 读取编码器数据，重置编码器等
    Encoder definitions
    
    Add an "#ifdef" block to this file to include support for

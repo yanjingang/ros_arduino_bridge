@@ -1,4 +1,4 @@
-/* 舵机的实现文件 */
+/* 舵机伺服器头文件，定义插脚，类 */
 #ifndef SERVOS_H
 #define SERVOS_H
 

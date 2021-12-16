@@ -2,6 +2,7 @@
 # coding=utf-8
 
 """
+    基本控制类，订阅cmd_vel话题，发布odom话题
     A base controller class for the Arduino microcontroller
     
     Borrowed heavily from Mike Feguson's ArbotiX base_controller.py code.

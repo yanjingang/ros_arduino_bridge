@@ -1,3 +1,4 @@
+# 模拟IO输出
 uint8 pin
 uint16 value
 ---

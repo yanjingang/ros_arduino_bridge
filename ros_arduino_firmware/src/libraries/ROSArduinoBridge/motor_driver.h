@@ -4,7 +4,7 @@
    *************************************************************/
 
 #ifdef L298_MOTOR_DRIVER
-  // 右轮电机驱动写引脚（接L298电驱板input口）
+  // 左轮电机驱动写引脚（接L298电驱板input口）
   #define LEFT_MOTOR_BACKWARD  9
   #define LEFT_MOTOR_FORWARD   10
   

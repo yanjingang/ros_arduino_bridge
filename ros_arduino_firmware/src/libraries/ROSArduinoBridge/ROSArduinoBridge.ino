@@ -198,6 +198,7 @@ int runCommand() {
     case PING:
         Serial.println(Ping(arg1));
         break;
+        
     #ifdef USE_SERVOS
     case SERVO_WRITE:
         servos[arg1].setTargetPosition(arg2);
@@ -223,9 +224,9 @@ int runCommand() {
         /* Reset the auto stop timer */
         lastMotorCommand = millis();
         if (arg1 == 0 && arg2 == 0) {
-        setMotorSpeeds(0, 0);
-        resetPID();
-        moving = 0;
+            setMotorSpeeds(0, 0);
+            resetPID();
+            moving = 0;
         }
         else moving = 1;
         leftPID.TargetTicksPerFrame = arg1;
@@ -234,8 +235,8 @@ int runCommand() {
         break;
     case UPDATE_PID:
         while ((str = strtok_r(p, ":", &p)) != '\0') {
-        pid_args[i] = atoi(str);
-        i++;
+            pid_args[i] = atoi(str);
+            i++;
         }
         Kp = pid_args[0];
         Kd = pid_args[1];
@@ -244,6 +245,7 @@ int runCommand() {
         Serial.println("OK");
         break;
     #endif
+
     default:
         Serial.println("Invalid Command");
         break;

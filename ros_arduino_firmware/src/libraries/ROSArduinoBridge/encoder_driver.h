@@ -10,13 +10,13 @@
   //below can be changed, but should be PORTD pins; 
   //otherwise additional changes in the code are required
   // 左轮电机编码器信号读引脚（电机编码信号线直连arduino读引脚）
-  #define LEFT_ENC_PIN_A PD2  //pin 2
-  #define LEFT_ENC_PIN_B PD3  //pin 3
+  #define LEFT_ENC_PIN_A PC4  //pin A4
+  #define LEFT_ENC_PIN_B PC5   //pin A5
   
   //below can be changed, but should be PORTC pins
   // 右轮电机编码器信号读引脚（电机编码信号线直连arduino读引脚）
-  #define RIGHT_ENC_PIN_A PC4  //pin A4
-  #define RIGHT_ENC_PIN_B PC5   //pin A5
+  #define RIGHT_ENC_PIN_A PD2  //pin 2
+  #define RIGHT_ENC_PIN_B PD3  //pin 3
 #endif
    
 long readEncoder(int i);

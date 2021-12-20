@@ -104,7 +104,7 @@ void doPID(SetPointInfo * p) {
   p->PrevInput = input;
 }
 
-/* 读取编码器值并调用PID例程 Read the encoder values and call the PID routine */
+/* 读取编码器值->计算PID->设置电机PWM Read the encoder values and call the PID routine */
 void updatePID() {
   /* 读取编码器 Read the encoders */
   leftPID.Encoder = readEncoder(LEFT);
@@ -127,5 +127,9 @@ void updatePID() {
   doPID(&leftPID);
 
   /* 相应地设置电机转速 Set the motor speeds accordingly */
+  Serial.print("updatePID leftPID speed: ");
+  Serial.println(leftPID.output);
+  Serial.print("updatePID rightPID speed: ");
+  Serial.println(rightPID.output);
   setMotorSpeeds(leftPID.output, rightPID.output);
 }

@@ -117,10 +117,10 @@
         }
     }else /*if (i == RIGHT) //no need for condition*/ {
         if (reverse == 0) { 
-            digitalWrite(RIGHT_MOTOR_DIR, HIGH);  // 正转
+            digitalWrite(RIGHT_MOTOR_DIR, LOW);   // 反转
             analogWrite(RIGHT_MOTOR_PWM, spd);  // PWM 调速
         }else if (reverse == 1) { 
-            digitalWrite(RIGHT_MOTOR_DIR, LOW);   // 反转
+            digitalWrite(RIGHT_MOTOR_DIR, HIGH);  // 正转
             analogWrite(RIGHT_MOTOR_PWM, spd);  // PWM 调速
         }
     }

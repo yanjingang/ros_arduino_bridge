@@ -17,12 +17,12 @@
   //#define LEFT_MOTOR_ENABLE 13
 #elif defined L298P_MOTOR_DRIVER    // L298P
   // PWM调速引脚
-  #define RIGHT_MOTOR_PWM  10  // A motor PWM调速(控制转速)
-  #define LEFT_MOTOR_PWM   11  // B motor PWM调速(控制转速)
+  #define LEFT_MOTOR_PWM    10  // A motor PWM调速(控制转速)
+  #define RIGHT_MOTOR_PWM   11  // B motor PWM调速(控制转速)
 
   // 普通数字引脚（控制方向）
-  #define RIGHT_MOTOR_DIR 12  // A motor 使能(控制转动方向)
-  #define LEFT_MOTOR_DIR  13  // B motor 使能(控制转动方向)
+  #define LEFT_MOTOR_DIR   12  // A motor 使能(控制转动方向)
+  #define RIGHT_MOTOR_DIR  13  // B motor 使能(控制转动方向)
 
 #endif
 

@@ -303,17 +303,17 @@ int runCommand() {
         break;
     case ANALOG_WRITE:
         analogWrite(arg1, arg2);
-        Serial.println("ANALOG_WRITE OK"); 
+        Serial.println("OK"); 
         break;
     case DIGITAL_WRITE:
         if (arg2 == 0) digitalWrite(arg1, LOW);
         else if (arg2 == 1) digitalWrite(arg1, HIGH);
-        Serial.println("DIGITAL_WRITE OK"); 
+        Serial.println("OK"); 
         break;
     case PIN_MODE:
         if (arg2 == 0) pinMode(arg1, INPUT);
         else if (arg2 == 1) pinMode(arg1, OUTPUT);
-        Serial.println("PIN_MODE OK");
+        Serial.println("OK");
         break;
     case PING:
         Serial.println(Ping(arg1));
@@ -322,7 +322,7 @@ int runCommand() {
     #ifdef USE_SERVOS
     case SERVO_WRITE:
         servos[arg1].setTargetPosition(arg2);
-        Serial.println("SERVO_WRITE OK");
+        Serial.println("OK");
         break;
     case SERVO_READ:
         Serial.println(servos[arg1].getServo().read());
@@ -338,7 +338,7 @@ int runCommand() {
     case RESET_ENCODERS:
         resetEncoders();
         resetPID();
-        Serial.println("RESET_ENCODERS OK");
+        Serial.println("OK");
         break;
     case MOTOR_SPEEDS:
         /* Reset the auto stop timer */
@@ -351,7 +351,7 @@ int runCommand() {
         else moving = 1;
         leftPID.TargetTicksPerFrame = arg1;
         rightPID.TargetTicksPerFrame = arg2;
-        Serial.println("MOTOR_SPEEDS OK"); 
+        Serial.println("OK"); 
         break;
     case UPDATE_PID:
         while ((str = strtok_r(p, ":", &p)) != '\0') {
@@ -362,7 +362,7 @@ int runCommand() {
         Kd = pid_args[1];
         Ki = pid_args[2];
         Ko = pid_args[3];
-        Serial.println("UPDATE_PID OK");
+        Serial.println("OK");
         break;
     #endif
 

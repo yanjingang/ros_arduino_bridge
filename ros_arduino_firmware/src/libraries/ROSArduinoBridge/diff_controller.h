@@ -127,9 +127,9 @@ void updatePID() {
   doPID(&leftPID);
 
   /* 相应地设置电机转速 Set the motor speeds accordingly */
-  Serial.print("updatePID leftPID speed: ");
-  Serial.println(leftPID.output);
-  Serial.print("updatePID rightPID speed: ");
-  Serial.println(rightPID.output);
+  //Serial.print("updatePID leftPID speed: ");
+  //Serial.println(leftPID.output);
+  //Serial.print("updatePID rightPID speed: ");
+  //Serial.println(rightPID.output);
   setMotorSpeeds(leftPID.output, rightPID.output);
 }

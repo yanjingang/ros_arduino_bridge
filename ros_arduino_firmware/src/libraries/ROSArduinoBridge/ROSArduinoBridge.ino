@@ -62,8 +62,11 @@
    /* 电机编码器信号处理 Encoders directly attached to Arduino board */
    #define ARDUINO_ENC_COUNTER
 
-   /* L298电机驱动版 Motor driver*/
-   #define L298_MOTOR_DRIVER
+   /* L298N电机驱动版 Motor driver*/
+   //#define L298_MOTOR_DRIVER
+   
+   /* L298P电机驱动版 Motor driver*/
+   #define L298P_MOTOR_DRIVER
 #endif
 
 //是否启用舵机

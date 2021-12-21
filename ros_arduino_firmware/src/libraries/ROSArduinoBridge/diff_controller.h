@@ -9,9 +9,9 @@
 
 /* 电机的PID设定信息 PID setpoint info For a Motor */
 typedef struct {
-  double TargetTicksPerFrame;    // 目标速度 target speed in ticks per frame
+  double TargetTicksPerFrame;    // 目标速度(编码器计数) target speed in ticks per frame
   long Encoder;                  // 编码器计数 encoder count
-  long PrevEnc;                  // last encoder count
+  long PrevEnc;                  // 编码器前次计数 last encoder count
 
   /*
   * Using previous input (PrevInput) instead of PrevError to avoid derivative kick,
@@ -40,7 +40,7 @@ int Kd = 12;
 int Ki = 0;
 int Ko = 50;
 
-unsigned char moving = 0; // 基地启动了吗？is the base in motion?
+unsigned char moving = 0; // 底盘是否在执行移动 is the base in motion?
 
 /*
 * 将PID变量初始化为零以防止启动峰值 Initialize PID variables to zero to prevent startup spikes
@@ -65,6 +65,7 @@ void resetPID(){
    rightPID.PrevInput = 0;
    rightPID.ITerm = 0;
 }
+
 
 /* 用于计算下一个电机指令的PID例程 PID routine to compute the next motor commands */
 void doPID(SetPointInfo * p) {
@@ -95,14 +96,13 @@ void doPID(SetPointInfo * p) {
   else if (output <= -MAX_PWM)
     output = -MAX_PWM;
   else
-  /*
-  * 允许转弯更改 allow turning changes, see http://brettbeauregard.com/blog/2011/04/improving-the-beginner%E2%80%99s-pid-tuning-changes/
-  */
+    //允许转弯更改 allow turning changes, see http://brettbeauregard.com/blog/2011/04/improving-the-beginner%E2%80%99s-pid-tuning-changes/
     p->ITerm += Ki * Perror;
 
   p->output = output;
   p->PrevInput = input;
 }
+
 
 /* 读取编码器值->计算PID->设置电机PWM Read the encoder values and call the PID routine */
 void updatePID() {
@@ -110,7 +110,7 @@ void updatePID() {
   leftPID.Encoder = readEncoder(LEFT);
   rightPID.Encoder = readEncoder(RIGHT);
   
-  /* 如果我们不移动，就没什么可做的了 If we're not moving there is nothing more to do */
+  /* moving为0时，停止移动并重置PID参数  If we're not moving there is nothing more to do */
   if (!moving){
     /*
     * 重置PIDs一次，以防止启动峰值 Reset PIDs once, to prevent startup spikes,

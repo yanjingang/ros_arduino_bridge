@@ -1,5 +1,5 @@
 /***************************************************************
-   伺服器实现 
+   舵机伺服器实现 
    Servo Sweep - by Nathaniel Gallinger
 
    Sweep servos one degree step at a time with a user defined

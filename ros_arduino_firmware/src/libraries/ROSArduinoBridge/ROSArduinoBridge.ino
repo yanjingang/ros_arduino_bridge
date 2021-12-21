@@ -281,7 +281,7 @@ void loop() {
 
 
 /* Clear the current command parameters */
-// 重置命令
+// 重置命令参数
 void resetCommand() {
   cmd = NULL;
   memset(argv1, 0, sizeof(argv1));

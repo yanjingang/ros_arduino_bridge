@@ -68,6 +68,7 @@ void resetPID(){
 
 
 /* 用于计算下一个电机指令的PID例程 PID routine to compute the next motor commands */
+// 左右电机具体PID调试函数
 void doPID(SetPointInfo * p) {
   long Perror;
   long output;
@@ -75,9 +76,23 @@ void doPID(SetPointInfo * p) {
 
   //Perror = p->TargetTicksPerFrame - (p->Encoder - p->PrevEnc);
   input = p->Encoder - p->PrevEnc;
+  // yanjingang: 增加一侧电机反转后编码器计数取反的特殊处理
+  if(p->TargetTicksPerFrame > 0 && input < 0){  // yan debug
+    input = abs(input);
+  }else if(p->TargetTicksPerFrame < 0 && input > 0){  // yan debug
+    input *= -1;
+  }
   Perror = p->TargetTicksPerFrame - input;
 
-
+  //debug
+  /*Serial.print(p->TargetTicksPerFrame);
+  Serial.print(" ");
+  Serial.print(p->Encoder);
+  Serial.print("-");
+  Serial.print(p->PrevEnc);
+  Serial.print("=");*/
+  //根据 input 绘图(工具-串口绘图器)
+  //Serial.println(input);
   /*
   * Avoid derivative kick and allow tuning changes,
   * see http://brettbeauregard.com/blog/2011/04/improving-the-beginner%E2%80%99s-pid-derivative-kick/
@@ -123,7 +138,7 @@ void updatePID() {
   }
 
   /* 计算每个电机的PID更新 Compute PID update for each motor */
-  doPID(&rightPID);
+  doPID(&rightPID); //调试时，可以先调试单个电机的PID。比如，可以先注释 doPID(&rightPID)；
   doPID(&leftPID);
 
   /* 相应地设置电机转速 Set the motor speeds accordingly */

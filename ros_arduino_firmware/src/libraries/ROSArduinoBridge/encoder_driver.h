@@ -17,6 +17,17 @@
   // 右轮电机编码器信号读引脚（B motor 编码信号线连 A4/5）
   #define RIGHT_ENC_PIN_A PC4  //pin A4
   #define RIGHT_ENC_PIN_B PC5   //pin A5
+  
+#elif defined ARDUINO_MY_COUNTER
+  #define LEFT_A 21   //--- 2
+  #define LEFT_B 20   //--- 3
+  #define RIGHT_A 18  //--- 5
+  #define RIGHT_B 19  //--- 4
+  void initEncoders();
+  void leftEncoderEventA();
+  void leftEncoderEventB();
+  void rightEncoderEventA();
+  void rightEncoderEventB();
 #endif
    
 long readEncoder(int i);

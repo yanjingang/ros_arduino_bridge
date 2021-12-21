@@ -93,8 +93,10 @@
 #elif defined L298P_MOTOR_DRIVER    // L298P电机驱动版
   // L298P固定转向引脚初始化
   void initMotorController() {
-    pinMode(RIGHT_MOTOR_DIR, OUTPUT);
     pinMode(LEFT_MOTOR_DIR, OUTPUT);
+    pinMode(RIGHT_MOTOR_DIR, OUTPUT);
+    pinMode(LEFT_MOTOR_PWM, OUTPUT);
+    pinMode(RIGHT_MOTOR_PWM, OUTPUT);
   }
   // 单电机运动
   void setMotorSpeed(int i, int spd) {
@@ -110,19 +112,17 @@
     if (i == LEFT) { 
         if (reverse == 0) { 
             digitalWrite(LEFT_MOTOR_DIR, HIGH);  // 正转
-            analogWrite(LEFT_MOTOR_PWM, spd);  // PWM 调速
         }else if (reverse == 1) { 
             digitalWrite(LEFT_MOTOR_DIR, LOW);   // 反转
-            analogWrite(LEFT_MOTOR_PWM, spd);  // PWM 调速
         }
+        analogWrite(LEFT_MOTOR_PWM, spd);  // PWM 调速
     }else /*if (i == RIGHT) //no need for condition*/ {
         if (reverse == 0) { 
             digitalWrite(RIGHT_MOTOR_DIR, LOW);   // 反转
-            analogWrite(RIGHT_MOTOR_PWM, spd);  // PWM 调速
         }else if (reverse == 1) { 
             digitalWrite(RIGHT_MOTOR_DIR, HIGH);  // 正转
-            analogWrite(RIGHT_MOTOR_PWM, spd);  // PWM 调速
         }
+        analogWrite(RIGHT_MOTOR_PWM, spd);  // PWM 调速
     }
   }
   // 多电机控制

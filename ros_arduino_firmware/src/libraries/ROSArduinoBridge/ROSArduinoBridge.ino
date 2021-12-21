@@ -63,6 +63,9 @@
    
    /* 电机编码器信号处理 Encoders directly attached to Arduino board */
    #define ARDUINO_ENC_COUNTER
+   
+   /* 测试电机编码器信号处理 Encoders directly attached to Arduino board */
+   //#define ARDUINO_MY_COUNTER
 
    /* L298N电机驱动版 Motor driver*/
    //#define L298_MOTOR_DRIVER
@@ -120,14 +123,14 @@
   #define PID_RATE           30     // Hz 调速频率
 
   /* Convert the rate into an interval */
-  const int PID_INTERVAL = 1000 / PID_RATE; //调速周期
+  const int PID_INTERVAL = 1000 / PID_RATE; //调速周期(1/30秒)
   
   /* Track the next time we make a PID calculation */
-  unsigned long nextPID = PID_INTERVAL;
+  unsigned long nextPID = PID_INTERVAL; //PID调试的结束时刻标记
 
   /* Stop the robot if it hasn't received a movement command
    in this number of milliseconds */
-  #define AUTO_STOP_INTERVAL 200   //2000 每次move命令持续执行时间(可按需修改)
+  #define AUTO_STOP_INTERVAL 500   //2000 每次move命令持续执行时间(可按需修改)
   long lastMotorCommand = AUTO_STOP_INTERVAL;
 #endif
 
@@ -185,6 +188,9 @@ void setup() {
         // enable PCINT1 and PCINT2 interrupt in the general interrupt mask
         // 在通用中断掩码中启用PCINT1和PCINT2中断
         PCICR |= (1 << PCIE1) | (1 << PCIE2);
+        
+    #elif defined ARDUINO_MY_COUNTER
+        initEncoders();
     #endif
 
     // 电机控制初始化（motor_driver.ino里对应的电驱板要实现次函数）
@@ -253,6 +259,7 @@ void loop() {
   // If we are using base control, run a PID calculation at the appropriate intervals
   // 启动底盘控制时，执行PID控制
   #ifdef USE_BASE
+    //如果当前时刻大于 nextPID,那么就执行PID调速，并在 nextPID 上自增一个PID调试周期
     if (millis() > nextPID) {
         // 读取编码器值->计算PID->设置电机PWM（diff_controller.h）
         updatePID();

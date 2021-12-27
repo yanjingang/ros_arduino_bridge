@@ -15,7 +15,7 @@ base_controller_rate: 10
 base_frame: base_footprint #base_frame 设置
 
 # === 马达参数 Robot drivetrain parameters
-wheel_diameter: 0.067     # 轮胎直径(米) 这个经过线速度标定测试不能按实际的来，按约5倍配置
+wheel_diameter: 0.03 #0.067     # 轮胎直径(米) 这个经过线速度标定测试不能按实际的来，按约1/2配置
 wheel_track: 0.11        # 两个轮胎间距(米)
 encoder_resolution: 11    # 编码器精度(编码器参数表：jga25-370配置的编码器为电机一圈11个脉冲)
 gear_reduction: 35       # 减速比(马达参数表：jga25-370 280rpm减速比为35)

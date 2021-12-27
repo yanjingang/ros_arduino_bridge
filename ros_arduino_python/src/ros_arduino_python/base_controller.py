@@ -59,7 +59,7 @@ class BaseController:
         self.setup_pid(pid_params)
             
         # How many encoder ticks are there per meter?
-        # 每米有多少个编码器刻度
+        # 每米有多少个编码器刻度(这个也可以实际控制走1米后查看encoder刻度差得到，再反算参数值)
         self.ticks_per_meter = self.encoder_resolution * self.gear_reduction  / (self.wheel_diameter * pi)
         
         # What is the maximum acceleration we will tolerate when changing wheel speeds?

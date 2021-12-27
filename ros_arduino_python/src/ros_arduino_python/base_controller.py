@@ -153,7 +153,8 @@ class BaseController:
             dth = (dright - dleft) / self.wheel_track
             vxy = dxy_ave / dt
             vth = dth / dt
-                
+            #print("vth: {} ticks_per_meter:{} dright:{} dleft:{} dt:{}".format(vth, self.ticks_per_meter, dright, dleft, dt))
+
             if (dxy_ave != 0):
                 dx = cos(dth) * dxy_ave
                 dy = -sin(dth) * dxy_ave

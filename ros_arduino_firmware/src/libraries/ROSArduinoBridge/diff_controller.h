@@ -76,12 +76,6 @@ void doPID(SetPointInfo * p) {
 
   //Perror = p->TargetTicksPerFrame - (p->Encoder - p->PrevEnc);
   input = p->Encoder - p->PrevEnc;
-  // yanjingang: 增加一侧电机反转后编码器计数取反的特殊处理
-  if(p->TargetTicksPerFrame > 0 && input < 0){  // yan debug
-    input = abs(input);
-  }else if(p->TargetTicksPerFrame < 0 && input > 0){  // yan debug
-    input *= -1;
-  }
   Perror = p->TargetTicksPerFrame - input;
 
   //debug
@@ -90,9 +84,11 @@ void doPID(SetPointInfo * p) {
   Serial.print(p->Encoder);
   Serial.print("-");
   Serial.print(p->PrevEnc);
-  Serial.print("=");*/
+  Serial.print("=");
   //根据 input 绘图(工具-串口绘图器)
-  //Serial.println(input);
+  Serial.println(input);*/
+
+  
   /*
   * Avoid derivative kick and allow tuning changes,
   * see http://brettbeauregard.com/blog/2011/04/improving-the-beginner%E2%80%99s-pid-derivative-kick/

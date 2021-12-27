@@ -67,11 +67,12 @@
    /* 测试电机编码器信号处理 Encoders directly attached to Arduino board */
    //#define ARDUINO_MY_COUNTER
 
-   /* L298N电机驱动版 Motor driver*/
-   //#define L298_MOTOR_DRIVER
-   
    /* L298P电机驱动版 Motor driver*/
    #define L298P_MOTOR_DRIVER
+   
+   /* L298N电机驱动版 Motor driver*/
+   //#define L298N_MOTOR_DRIVER
+   
 #endif
 
 //是否启用舵机
@@ -130,7 +131,7 @@
 
   /* Stop the robot if it hasn't received a movement command
    in this number of milliseconds */
-  #define AUTO_STOP_INTERVAL 500   //2000 每次move命令持续执行时间(可按需修改)
+  #define AUTO_STOP_INTERVAL 200   //2000 每次move命令持续执行时间(可按需修改)
   long lastMotorCommand = AUTO_STOP_INTERVAL;
 #endif
 

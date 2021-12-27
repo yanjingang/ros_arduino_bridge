@@ -56,7 +56,8 @@
   
   /* Wrap the encoder reading function */
   long readEncoder(int i) {
-    if (i == LEFT) return left_enc_pos;
+    //if (i == LEFT) return left_enc_pos;
+    if (i == LEFT) return left_enc_pos * -1;  //yanjingang:左电机编码器取反（即放在两侧的两个电机正负未对调，此时前进或后退，两电机的编码器转动方向是反的，需要修正下）
     else return right_enc_pos;
   }
 

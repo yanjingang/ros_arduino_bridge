@@ -473,8 +473,8 @@ the wiring between the L298 motor driver and arduino board is defined in motor_d
     #define LEFT_MOTOR_BACKWARD  6
     #define RIGHT_MOTOR_FORWARD  9
     #define LEFT_MOTOR_FORWARD   10
-    #define RIGHT_MOTOR_ENABLE 12
-    #define LEFT_MOTOR_ENABLE 13
+    //#define RIGHT_MOTOR_ENABLE 12
+    //#define LEFT_MOTOR_ENABLE 13
 
 wire them this way or change them if you want, and make sure that the L298 motor driver is defined then compile and upload the firmware.
 

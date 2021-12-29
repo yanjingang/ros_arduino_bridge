@@ -96,6 +96,10 @@
   }
   // 多电机控制
   void setMotorSpeeds(int leftSpeed, int rightSpeed) {
+    if((leftSpeed > 0 && rightSpeed < 0) || (leftSpeed < 0 && rightSpeed > 0)){
+      leftSpeed = leftSpeed/3;
+      rightSpeed = rightSpeed/3;
+    }
     setMotorSpeed(LEFT, leftSpeed);
     setMotorSpeed(RIGHT, rightSpeed);
   }

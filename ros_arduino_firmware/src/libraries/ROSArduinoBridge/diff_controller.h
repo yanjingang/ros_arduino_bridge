@@ -100,6 +100,7 @@ void doPID(SetPointInfo * p) {
   p->PrevEnc = p->Encoder;
 
   output += p->output;
+  //Serial.println(output);
   // 累积积分误差*或*限制输出 Accumulate Integral error *or* Limit output.
   // 当输出饱和时停止累积 Stop accumulating when output saturates
   if (output >= MAX_PWM)

@@ -37,9 +37,6 @@ accel_limit: 1.0
 #	  * PololuMotorCurrent
 #	  * PhidgetsVoltage
 #	  * PhidgetsCurrent (20 Amp, DC)
-
-
-
 sensors: {
   #motor_current_left:   {pin: 0, type: PololuMotorCurrent, rate: 5},
   #motor_current_right:  {pin: 1, type: PololuMotorCurrent, rate: 5},

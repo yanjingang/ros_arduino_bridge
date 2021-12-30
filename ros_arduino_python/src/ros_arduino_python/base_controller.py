@@ -52,6 +52,7 @@ class BaseController:
         pid_params['Ko'] = rospy.get_param("~Ko", 50)
         
         self.accel_limit = rospy.get_param('~accel_limit', 0.1)
+        self.diamete_ratio = rospy.get_param('~diamete_ratio', 1.0) # yanjingang:左轮相对于右轮轮径比系数,往左偏,调小,往右偏调大
         self.motors_reversed = rospy.get_param("~motors_reversed", False)
         
         # Set up PID parameters and check for missing values
@@ -246,7 +247,7 @@ class BaseController:
             left = x - th * self.wheel_track  * self.gear_reduction / 2.0
             right = x + th * self.wheel_track  * self.gear_reduction / 2.0
             
-        self.v_des_left = int(left * self.ticks_per_meter / self.arduino.PID_RATE)
+        self.v_des_left = int(left * self.ticks_per_meter / self.arduino.PID_RATE / self.diamete_ratio) # 左轮等以下右轮
         self.v_des_right = int(right * self.ticks_per_meter / self.arduino.PID_RATE)
         
 

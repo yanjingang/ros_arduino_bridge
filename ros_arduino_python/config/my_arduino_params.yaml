@@ -15,7 +15,7 @@ base_controller_rate: 10
 base_frame: base_footprint #base_frame 设置
 
 # === 马达参数 Robot drivetrain parameters
-wheel_diameter: 0.067 #0.067     # 轮胎直径(米) 这个经过线速度标定测试不能按实际的来，按约1/2配置
+wheel_diameter: 0.067 #0.067     # 轮胎直径(米) 
 wheel_track: 0.226 #0.11        # 两个轮胎间距(米)
 encoder_resolution: 38.5    # 编码器精度(编码器参数表：手动推车移动1米，用1米的电机编码器值*(self.wheel_diameter * pi)/self.gear_reduction可以计算出此编码器精度)
 gear_reduction: 30          # 减速比(马达参数表：jgb37-520 12v 空转330rpm 减速比20)

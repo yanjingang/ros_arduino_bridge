@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding=utf-8
 """
-    线速度标定
+    线速度标定（测试直行1米）
 """
 
 import rospy
@@ -25,7 +25,7 @@ class CalibrateLinear():
         r = rospy.Rate(self.rate)
         # Set the distance to travel
         # 设置移动距离
-        self.test_distance = 1.0  # meters
+        self.test_distance = 1.0  # 测试直行1米 meters
         self.speed = 1  # 米/每秒 meters per second
         self.tolerance = 0.01  # 容忍误差 meters
         self.odom_linear_scale_correction = 1.0

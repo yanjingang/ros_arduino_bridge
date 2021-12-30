@@ -28,14 +28,15 @@ typedef struct {
   //int Ierror;
   int ITerm;                    //integrated term
 
-  long output;                    // 最后电机设置 last motor setting
+  double diamete_ratio;         //yanjingang:左轮相对于右轮轮径比系数(255饱和输出直行，往哪侧偏，则将对侧轮调大)
+  long output;                  // 最后电机设置 last motor setting
 }
 SetPointInfo;
 
 SetPointInfo leftPID, rightPID;
 
 /* PID参数 PID Parameters */
-int Kp = 20;
+int Kp = 15;
 int Kd = 12;
 int Ki = 0;
 int Ko = 50;
@@ -54,6 +55,7 @@ void resetPID(){
    leftPID.TargetTicksPerFrame = 0.0;
    leftPID.Encoder = readEncoder(LEFT);
    leftPID.PrevEnc = leftPID.Encoder;
+   leftPID.diamete_ratio = 1.035972814; //yanjingang:左轮相对右轮的饱和输出时的轮速差比，需要反复试，确保255包和输出时能走直线不偏向一侧（>1.0表示此轮较快，需减慢）
    leftPID.output = 0;
    leftPID.PrevInput = 0;
    leftPID.ITerm = 0;
@@ -61,6 +63,7 @@ void resetPID(){
    rightPID.TargetTicksPerFrame = 0.0;
    rightPID.Encoder = readEncoder(RIGHT);
    rightPID.PrevEnc = rightPID.Encoder;
+   rightPID.diamete_ratio = 1.0;
    rightPID.output = 0;
    rightPID.PrevInput = 0;
    rightPID.ITerm = 0;
@@ -104,9 +107,9 @@ void doPID(SetPointInfo * p) {
   // 累积积分误差*或*限制输出 Accumulate Integral error *or* Limit output.
   // 当输出饱和时停止累积 Stop accumulating when output saturates
   if (output >= MAX_PWM)
-    output = MAX_PWM;
+    output = MAX_PWM / p->diamete_ratio;  // 输出饱和时，处理左右电机的轮速差
   else if (output <= -MAX_PWM)
-    output = -MAX_PWM;
+    output = -MAX_PWM / p->diamete_ratio;  // 输出饱和时，处理左右电机的轮速差
   else
     //允许转弯更改 allow turning changes, see http://brettbeauregard.com/blog/2011/04/improving-the-beginner%E2%80%99s-pid-tuning-changes/
     p->ITerm += Ki * Perror;
@@ -135,13 +138,13 @@ void updatePID() {
   }
 
   /* 计算每个电机的PID更新 Compute PID update for each motor */
-  doPID(&rightPID); //调试时，可以先调试单个电机的PID。比如，可以先注释 doPID(&rightPID)；
-  doPID(&leftPID);
+  doPID(&leftPID);  //调试时，可以先调试单个电机的PID。比如，可以先注释 doPID(&rightPID)；
+  doPID(&rightPID); 
 
   /* 相应地设置电机转速 Set the motor speeds accordingly */
-  //Serial.print("updatePID leftPID speed: ");
-  //Serial.println(leftPID.output);
-  //Serial.print("updatePID rightPID speed: ");
-  //Serial.println(rightPID.output);
+  /*Serial.print("speed left: ");
+  Serial.print(leftPID.output);
+  Serial.print(" right: ");
+  Serial.println(rightPID.output);*/
   setMotorSpeeds(leftPID.output, rightPID.output);
 }

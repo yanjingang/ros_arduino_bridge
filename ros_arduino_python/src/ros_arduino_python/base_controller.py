@@ -228,18 +228,18 @@ class BaseController:
         self.arduino.drive(0, 0)
             
     def cmdVelCallback(self, req):
-        # Handle velocity-based movement requests
+        # 处理基于速度的移动请求    Handle velocity-based movement requests
         self.last_cmd_vel = rospy.Time.now()
         
-        x = req.linear.x         # m/s
-        th = req.angular.z       # rad/s
+        x = req.linear.x         # 前进线速度  m/sm/s
+        th = req.angular.z       # 旋转角速度  rad/s
 
         if x == 0:
-            # Turn in place
+            # 纯转向运动    Turn in place
             right = th * self.wheel_track  * self.gear_reduction / 2.0
             left = -right
         elif th == 0:
-            # Pure forward/backward motion
+            # 纯向前/向后运动   Pure forward/backward motion
             left = right = x
         else:
             # Rotation about a point in space
@@ -248,6 +248,11 @@ class BaseController:
             
         self.v_des_left = int(left * self.ticks_per_meter / self.arduino.PID_RATE)
         self.v_des_right = int(right * self.ticks_per_meter / self.arduino.PID_RATE)
+        
+        # 转向的特殊降低速处理（使转向速度降低9倍（z=1时从旋转360度降低为旋转40度）
+        if((self.v_des_left > 0 and self.v_des_right < 0) or (self.v_des_left < 0 and self.v_des_right > 0)):
+            self.v_des_left = int(self.v_des_left / 9)
+            self.v_des_right = int(self.v_des_right / 9)
         
 
         

@@ -233,7 +233,7 @@ class BaseController:
         
         x = req.linear.x         # 前进线速度  m/sm/s
         th = req.angular.z       # 旋转角速度  rad/s
-        th = th * self.wheel_track  * self.gear_reduction / 2.0 / 18.0    # 旋转角速度根据电机和轮径调整，使转向速度降低（z=1时从旋转360度降低为旋转40度）
+        th = th * self.wheel_track  * self.gear_reduction / 2.0 / 27.0    # 旋转角速度根据电机和轮径调整，使转向速度降低（yanjingang: /18.0是为了angular.z=1时从旋转360度降低为旋转40度）
 
         if x == 0:
             # 纯旋转运动    Turn in place

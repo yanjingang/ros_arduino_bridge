@@ -55,7 +55,7 @@ void resetPID(){
    leftPID.TargetTicksPerFrame = 0.0;
    leftPID.Encoder = readEncoder(LEFT);
    leftPID.PrevEnc = leftPID.Encoder;
-   leftPID.diamete_ratio = 1.01; //1.035972814; //yanjingang:左轮相对右轮的饱和输出时的轮速差比，需要反复试，确保255包和输出时能走直线不偏向一侧（>1.0表示此轮较快，需减慢）
+   leftPID.diamete_ratio = 1.035972814; //1.035972814; //yanjingang:左轮相对右轮的饱和输出时的轮速差比，需要反复试，确保255包和输出时能走直线不偏向一侧（>1.0表示此轮较快，需减慢）
    leftPID.output = 0;
    leftPID.PrevInput = 0;
    leftPID.ITerm = 0;

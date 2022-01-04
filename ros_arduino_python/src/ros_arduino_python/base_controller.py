@@ -53,6 +53,7 @@ class BaseController:
         
         self.accel_limit = rospy.get_param('~accel_limit', 0.1)
         self.motors_reversed = rospy.get_param("~motors_reversed", False)
+        self.turn_reduction = rospy.get_param('~turn_reduction', 2.0)   # yanjingang: 转向减速比
         
         # Set up PID parameters and check for missing values
         # 设置PID参数并检查缺少的值
@@ -233,7 +234,7 @@ class BaseController:
         
         x = req.linear.x         # 前进线速度  m/sm/s
         th = req.angular.z       # 旋转角速度  rad/s
-        th = th * self.wheel_track  * self.gear_reduction / 2.0 / 27.0    # 旋转角速度根据电机和轮径调整，使转向速度降低（yanjingang: /18.0是为了angular.z=1时从旋转360度降低为旋转40度）
+        th = th * self.wheel_track  * self.gear_reduction / self.turn_reduction    # 旋转角速度根据电机和轮径调整，使转向速度降低（yanjingang: /18.0是为了angular.z=1时从旋转360度降低为旋转40度）
 
         if x == 0:
             # 纯旋转运动    Turn in place

@@ -217,7 +217,8 @@ class Arduino:
             values = list(map(int, values))
         except:
             values = []
-        print("execute_array cmd: {}  recv: {}".format(cmd, values))
+        if len(values) == 2 and (values[0] != 0 or values[0] != 0):   # debug print
+            print("execute_array cmd: {}  recv: {}".format(cmd, values))
 
         self.mutex.release()
         return values
@@ -238,7 +239,8 @@ class Arduino:
         try:
             self.port.write((cmd + '\r').encode())
             ack = self.recv(self.timeout)
-            print("execute_ack cmd: {}  ack: {}".format(cmd, ack))
+            if cmd != 'm 0 0':  # debug print
+                print("execute_ack cmd: {}  ack: {}".format(cmd, ack))
             while attempts < ntries and (ack == '' or ack == 'Invalid Command' or ack == None):
                 try:
                     self.port.flushInput()

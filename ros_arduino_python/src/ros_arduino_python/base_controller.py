@@ -220,7 +220,8 @@ class BaseController:
             # 设置马达速度
             if not self.stopped:
                 self.arduino.drive(self.v_left, self.v_right)
-                print("set motor speeds: {} {}".format(self.v_left, self.v_right))
+                if self.v_left != 0 or self.v_right != 0:  # debug print
+                    print("set motor speeds: {} {}".format(self.v_left, self.v_right))
                 
             self.t_next = now + self.t_delta
             
@@ -251,10 +252,6 @@ class BaseController:
         self.v_des_left = int(left * self.ticks_per_meter / self.arduino.PID_RATE)
         self.v_des_right = int(right * self.ticks_per_meter / self.arduino.PID_RATE)
         
-        """# 
-        if((self.v_des_left > 0 and self.v_des_right < 0) or (self.v_des_left < 0 and self.v_des_right > 0)):
-            self.v_des_left = int(self.v_des_left / 9)
-            self.v_des_right = int(self.v_des_right / 9)"""
         
 
         

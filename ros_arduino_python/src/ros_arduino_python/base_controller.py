@@ -233,26 +233,27 @@ class BaseController:
         
         x = req.linear.x         # 前进线速度  m/sm/s
         th = req.angular.z       # 旋转角速度  rad/s
+        th = th * self.wheel_track  * self.gear_reduction / 2.0 / 9.0    # 旋转角速度根据电机和轮径调整，使转向速度降低（z=1时从旋转360度降低为旋转40度）
 
         if x == 0:
-            # 纯转向运动    Turn in place
-            right = th * self.wheel_track  * self.gear_reduction / 2.0
+            # 纯旋转运动    Turn in place
+            right = th
             left = -right
         elif th == 0:
             # 纯向前/向后运动   Pure forward/backward motion
             left = right = x
         else:
-            # Rotation about a point in space
-            left = x - th * self.wheel_track  * self.gear_reduction / 2.0
-            right = x + th * self.wheel_track  * self.gear_reduction / 2.0
+            # 复合运动  Rotation about a point in space
+            left = x - th
+            right = x + th
             
         self.v_des_left = int(left * self.ticks_per_meter / self.arduino.PID_RATE)
         self.v_des_right = int(right * self.ticks_per_meter / self.arduino.PID_RATE)
         
-        # 转向的特殊降低速处理（使转向速度降低9倍（z=1时从旋转360度降低为旋转40度）
+        """# 
         if((self.v_des_left > 0 and self.v_des_right < 0) or (self.v_des_left < 0 and self.v_des_right > 0)):
             self.v_des_left = int(self.v_des_left / 9)
-            self.v_des_right = int(self.v_des_right / 9)
+            self.v_des_right = int(self.v_des_right / 9)"""
         
 
         

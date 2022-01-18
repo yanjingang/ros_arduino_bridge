@@ -135,6 +135,7 @@
   long lastMotorCommand = AUTO_STOP_INTERVAL;
 #endif
 
+
 // A pair of varibles to help parse serial commands (thanks Fergs)
 // 帮助解析串行命令
 int arg = 0;
@@ -155,6 +156,14 @@ long arg1;          // 两个参数整数
 long arg2;
 
 
+//是否启用PS2蓝牙手柄
+#define USE_PS2      // yanjingang: Enable the ps2x controller code
+//#undef USE_PS2     // Disable the ps2x controller code
+
+//如果启用PS2手柄，需要包含对应头文件
+#ifdef USE_PS2
+  #include "ps2_driver.h"  //yanjingang: ps2驱动及参数初始化
+#endif
 
 
 /* Setup function--runs once at startup. */
@@ -209,6 +218,40 @@ void setup() {
             servoPins[i],
             stepDelay[i],
             servoInitPosition[i]);
+    }
+  #endif
+
+  // Initialize the ps2 controller if used */
+  // 初始化PS2遥控器
+  #ifdef USE_PS2
+    // 设置PS2控制引脚
+    ps2_error = ps2x.config_gamepad(PS2_CLOCK_PIN, PS2_COMMAND_PIN, PS2_ATTENTION_PIN, PS2_DATA_PIN, PS2_PRESSURES, PS2_RUMBLE);  // setup pins and settings:  GamePad(clock, command, attention,  data, Pressures?, Rumble?) 
+    if (ps2_error == 0) { // 成功
+        Serial.println("Found Controller, configured successful");
+        Serial.println("Try out all the buttons, X will ps2_vibrate the controller, faster as you press harder;");
+        Serial.println("holding L1 or R1 will print out the analog stick values.");
+        Serial.println("Go to [url]www.billporter.info[/url] for updates and to report bugs.");
+    } else if (ps2_error == 1){ // 未找到控制器，请检查接线
+        Serial.println("No controller found, check wiring, see readme.txt to enable debug. visit [url]www.billporter.info[/url] for troubleshooting tips");
+    }else if (ps2_error == 2){  // 找到控制器但不接受命令
+        Serial.println("Controller found but not accepting commands. see readme.txt to enable debug. Visit [url]www.billporter.info[/url] for troubleshooting tips");
+    }else if (ps2_error == 3){  // 控制器拒绝进入压力模式，可能不支持
+        Serial.println("Controller refusing to enter Pressures mode, may not support it. ");
+    }
+    // Serial.print(ps2x.Analog(1), HEX);
+
+    // 读取PS2设备类型
+    ps2_type = ps2x.readType();
+    switch (ps2_type) {
+        case 0:
+            Serial.println("Unknown Controller ps2_type");
+            break;
+        case 1:
+            Serial.println("DualShock Controller Found");
+            break;
+        case 2:
+            Serial.println("GuitarHero Controller Found");
+            break;
     }
   #endif
 }
@@ -282,6 +325,77 @@ void loop() {
     for (i = 0; i < N_SERVOS; i++) {
         servos[i].doSweep();
     }
+  #endif
+
+  // 读取PS2遥控指令
+  #ifdef USE_PS2
+    if (ps2_error == 1)  // skip loop if no controller found
+        return;
+    
+    // 读取手柄的控制信号
+    if (ps2_type != 2) {   // DualShock Controller
+        ps2x.read_gamepad(false, ps2_vibrate);  // read controller and set large motor to spin at 'ps2_vibrate' speed
+
+        if (ps2x.Button(PSB_START))  // will be TRUE as long as button is pressed
+            Serial.println("Start is being held");
+        if (ps2x.Button(PSB_SELECT))
+            Serial.println("Select is being held");
+
+        if (ps2x.Button(    PSB_PAD_UP)) {  // will be TRUE as long as button is pressed
+            Serial.print("Up held this hard: ");
+            Serial.println(ps2x.Analog(PSAB_PAD_UP), DEC);
+        }
+        if (ps2x.Button(PSB_PAD_RIGHT)) {
+            Serial.print("Right held this hard: ");
+            Serial.println(ps2x.Analog(PSAB_PAD_RIGHT), DEC);
+        }
+        if (ps2x.Button(PSB_PAD_LEFT)) {
+            Serial.print("LEFT held this hard: ");
+            Serial.println(ps2x.Analog(PSAB_PAD_LEFT), DEC);
+        }
+        if (ps2x.Button(PSB_PAD_DOWN)) {
+            Serial.print("DOWN held this hard: ");
+            Serial.println(ps2x.Analog(PSAB_PAD_DOWN), DEC);
+        }
+
+        ps2_vibrate = ps2x.Analog(PSAB_BLUE);  // this will set the large motor ps2_vibrate speed based on how hard you press the blue (X) button
+
+        if (ps2x.NewButtonState())  // will be TRUE if any button changes state  (on to off, or off to on)
+        {
+            if (ps2x.Button(PSB_L3))
+                Serial.println("L3 pressed");
+            if (ps2x.Button(PSB_R3))
+                Serial.println("R3 pressed");
+            if (ps2x.Button(PSB_L2))
+                Serial.println("L2 pressed");
+            if (ps2x.Button(PSB_R2))
+                Serial.println("R2 pressed");
+            if (ps2x.Button(PSB_GREEN))
+                Serial.println("Triangle pressed");
+        }
+
+        if (ps2x.ButtonPressed(    PSB_RED))  // will be TRUE if button was JUST pressed
+            Serial.println("Circle just pressed");
+
+        if (ps2x.ButtonReleased(    PSB_PINK))  // will be TRUE if button was JUST released
+            Serial.println("Square just released");
+
+        if (ps2x.NewButtonState(PSB_BLUE))  // will be TRUE if button was JUST pressed OR released
+            Serial.println("X just changed");
+
+        if (ps2x.Button(PSB_L1) || ps2x.Button(PSB_R1))  // print stick values if either is TRUE
+        {
+            Serial.print("Stick Values:");
+            Serial.print(ps2x.Analog(PSS_LY), DEC);  // Left stick, Y axis. Other options: LX, RY, RX
+            Serial.print(",");
+            Serial.print(ps2x.Analog(PSS_LX), DEC);
+            Serial.print(",");
+            Serial.print(ps2x.Analog(PSS_RY), DEC);
+            Serial.print(",");
+            Serial.println(ps2x.Analog(PSS_RX), DEC);
+        }
+    }
+    //delay(50);
   #endif
 }
 

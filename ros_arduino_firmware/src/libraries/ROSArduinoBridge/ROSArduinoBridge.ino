@@ -354,7 +354,7 @@ void loop() {
             Serial.print("DOWN held this hard: ");
             Serial.println(ps2x.Analog(PSAB_PAD_DOWN), DEC);
         }
-        //
+        // 振动强度：按下蓝色（X）按钮的力度
         ps2_vibrate = ps2x.Analog(PSAB_BLUE);  // this will set the large motor ps2_vibrate speed based on how hard you press the blue (X) button
         // 右侧4个按键
         if (ps2x.NewButtonState())  // will be TRUE if any button changes state  (on to off, or off to on)

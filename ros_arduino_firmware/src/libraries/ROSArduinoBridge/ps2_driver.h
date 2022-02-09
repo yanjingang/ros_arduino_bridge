@@ -9,7 +9,7 @@
  * 
  */
 
-#include <PS2X_lib.h>     //ps2驱动
+#include "ps2x_lib.h"
 
 // 初始化手柄控制对象
 PS2X ps2x;
@@ -20,9 +20,9 @@ byte ps2_vibrate = 0;
 
 
 //设置引脚 setup pins and settings:  GamePad(clock, command, attention,  data, Pressures?, Rumble?) 
-#define PS2_CLOCK_PIN   13
-#define PS2_COMMAND_PIN  11
-#define PS2_ATTENTION_PIN  10
-#define PS2_DATA_PIN 12
-#define PS2_PRESSURES true
-#define PS2_RUMBLE true
+#define PS2_ATTENTION_PIN  6
+#define PS2_COMMAND_PIN    7
+#define PS2_DATA_PIN       8
+#define PS2_CLOCK_PIN      9
+#define PS2_USE_PRESSURES  true  // 启用压感
+#define PS2_USE_RUMBLE     false  // 启用蜂鸣

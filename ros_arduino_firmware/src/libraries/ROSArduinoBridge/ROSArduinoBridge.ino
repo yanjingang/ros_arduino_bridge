@@ -225,12 +225,9 @@ void setup() {
   // 初始化PS2遥控器
   #ifdef USE_PS2
     // 设置PS2控制引脚
-    ps2_error = ps2x.config_gamepad(PS2_CLOCK_PIN, PS2_COMMAND_PIN, PS2_ATTENTION_PIN, PS2_DATA_PIN, PS2_PRESSURES, PS2_RUMBLE);  // setup pins and settings:  GamePad(clock, command, attention,  data, Pressures?, Rumble?) 
+    ps2_error = ps2x.config_gamepad(PS2_CLOCK_PIN, PS2_COMMAND_PIN, PS2_ATTENTION_PIN, PS2_DATA_PIN, PS2_USE_PRESSURES, PS2_USE_RUMBLE);  // setup pins and settings:  GamePad(clock, command, attention,  data, Pressures?, Rumble?) 
     if (ps2_error == 0) { // 成功
         Serial.println("Found Controller, configured successful");
-        Serial.println("Try out all the buttons, X will ps2_vibrate the controller, faster as you press harder;");
-        Serial.println("holding L1 or R1 will print out the analog stick values.");
-        Serial.println("Go to [url]www.billporter.info[/url] for updates and to report bugs.");
     } else if (ps2_error == 1){ // 未找到控制器，请检查接线
         Serial.println("No controller found, check wiring, see readme.txt to enable debug. visit [url]www.billporter.info[/url] for troubleshooting tips");
     }else if (ps2_error == 2){  // 找到控制器但不接受命令
@@ -335,13 +332,13 @@ void loop() {
     // 读取手柄的控制信号
     if (ps2_type != 2) {   // DualShock Controller
         ps2x.read_gamepad(false, ps2_vibrate);  // read controller and set large motor to spin at 'ps2_vibrate' speed
-
-        if (ps2x.Button(PSB_START))  // will be TRUE as long as button is pressed
+        // 开始/选择键
+        if (ps2x.Button(PSB_START))  
             Serial.println("Start is being held");
         if (ps2x.Button(PSB_SELECT))
             Serial.println("Select is being held");
-
-        if (ps2x.Button(    PSB_PAD_UP)) {  // will be TRUE as long as button is pressed
+        // 左侧上下左右键
+        if (ps2x.Button(PSB_PAD_UP)) {  
             Serial.print("Up held this hard: ");
             Serial.println(ps2x.Analog(PSAB_PAD_UP), DEC);
         }
@@ -357,32 +354,25 @@ void loop() {
             Serial.print("DOWN held this hard: ");
             Serial.println(ps2x.Analog(PSAB_PAD_DOWN), DEC);
         }
-
+        //
         ps2_vibrate = ps2x.Analog(PSAB_BLUE);  // this will set the large motor ps2_vibrate speed based on how hard you press the blue (X) button
-
+        // 右侧4个按键
         if (ps2x.NewButtonState())  // will be TRUE if any button changes state  (on to off, or off to on)
         {
-            if (ps2x.Button(PSB_L3))
-                Serial.println("L3 pressed");
-            if (ps2x.Button(PSB_R3))
-                Serial.println("R3 pressed");
-            if (ps2x.Button(PSB_L2))
-                Serial.println("L2 pressed");
-            if (ps2x.Button(PSB_R2))
-                Serial.println("R2 pressed");
-            if (ps2x.Button(PSB_GREEN))
+            if (ps2x.Button(PSB_GREEN)){  // 右侧三角形键
                 Serial.println("Triangle pressed");
+            }
         }
-
-        if (ps2x.ButtonPressed(    PSB_RED))  // will be TRUE if button was JUST pressed
+        if (ps2x.ButtonPressed(PSB_RED)){  // 右侧圆形键
             Serial.println("Circle just pressed");
-
-        if (ps2x.ButtonReleased(    PSB_PINK))  // will be TRUE if button was JUST released
+        }
+        if (ps2x.ButtonReleased(PSB_PINK)){  // 右侧矩形键
             Serial.println("Square just released");
-
-        if (ps2x.NewButtonState(PSB_BLUE))  // will be TRUE if button was JUST pressed OR released
+        }
+        if (ps2x.NewButtonState(PSB_BLUE)){  // 右侧X键
             Serial.println("X just changed");
-
+        }
+        // 当按下R键时，输出两个摇杆的当前值
         if (ps2x.Button(PSB_L1) || ps2x.Button(PSB_R1))  // print stick values if either is TRUE
         {
             Serial.print("Stick Values:");
@@ -395,7 +385,7 @@ void loop() {
             Serial.println(ps2x.Analog(PSS_RX), DEC);
         }
     }
-    //delay(50);
+    delay(50);
   #endif
 }
 

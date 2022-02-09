@@ -17,6 +17,7 @@ PS2X ps2x;
 int ps2_error = 0;
 byte ps2_type = 0;
 byte ps2_vibrate = 0;
+byte ps2_motor_spd = 50; //默认控制电机转速
 
 
 //设置引脚 setup pins and settings:  GamePad(clock, command, attention,  data, Pressures?, Rumble?) 
@@ -25,4 +26,4 @@ byte ps2_vibrate = 0;
 #define PS2_DATA_PIN       8
 #define PS2_CLOCK_PIN      9
 #define PS2_USE_PRESSURES  true  // 启用压感
-#define PS2_USE_RUMBLE     false  // 启用蜂鸣
+#define PS2_USE_RUMBLE     true  // 启用蜂鸣

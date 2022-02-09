@@ -131,7 +131,7 @@
 
   /* Stop the robot if it hasn't received a movement command
    in this number of milliseconds */
-  #define AUTO_STOP_INTERVAL 5000   //2000 每次move命令持续执行时间(可按需修改)
+  #define AUTO_STOP_INTERVAL 1000   //2000 每次move命令持续执行时间(可按需修改，调试PID时建议5000)
   long lastMotorCommand = AUTO_STOP_INTERVAL;
 #endif
 
@@ -297,32 +297,6 @@ void loop() {
     }
   }
 
-  // If we are using base control, run a PID calculation at the appropriate intervals
-  // 启动底盘控制时，执行PID控制
-  #ifdef USE_BASE
-    //如果当前时刻大于 nextPID,那么就执行PID调速，并在 nextPID 上自增一个PID调试周期
-    if (millis() > nextPID) {
-        // 读取编码器值->计算PID->设置电机PWM（diff_controller.h）
-        updatePID();
-        nextPID += PID_INTERVAL;
-    }
-    
-    // Check to see if we have exceeded the auto-stop interval
-    // 电机指令自动停止
-    if ((millis() - lastMotorCommand) > AUTO_STOP_INTERVAL) {
-        setMotorSpeeds(0, 0);
-        moving = 0;
-    }
-  #endif
-
-  // Sweep servos
-  // 扫描伺候
-  #ifdef USE_SERVOS
-    int i;
-    for (i = 0; i < N_SERVOS; i++) {
-        servos[i].doSweep();
-    }
-  #endif
 
   // 读取PS2遥控指令
   #ifdef USE_PS2
@@ -341,21 +315,41 @@ void loop() {
         if (ps2x.Button(PSB_PAD_UP)) {  
             Serial.print("Up held this hard: ");
             Serial.println(ps2x.Analog(PSAB_PAD_UP), DEC);
+            // 设置电机PID目标转速
+            lastMotorCommand = millis();
+            moving = 1;
+            leftPID.TargetTicksPerFrame = ps2_motor_spd;
+            rightPID.TargetTicksPerFrame = ps2_motor_spd;
         }
         if (ps2x.Button(PSB_PAD_RIGHT)) {
             Serial.print("Right held this hard: ");
             Serial.println(ps2x.Analog(PSAB_PAD_RIGHT), DEC);
+            // 设置电机PID目标转速
+            lastMotorCommand = millis();
+            moving = 1;
+            leftPID.TargetTicksPerFrame = ps2_motor_spd;
+            rightPID.TargetTicksPerFrame = ps2_motor_spd * -1;
         }
         if (ps2x.Button(PSB_PAD_LEFT)) {
             Serial.print("LEFT held this hard: ");
             Serial.println(ps2x.Analog(PSAB_PAD_LEFT), DEC);
+            // 设置电机PID目标转速
+            lastMotorCommand = millis();
+            moving = 1;
+            leftPID.TargetTicksPerFrame = ps2_motor_spd * -1;
+            rightPID.TargetTicksPerFrame = ps2_motor_spd;
         }
         if (ps2x.Button(PSB_PAD_DOWN)) {
             Serial.print("DOWN held this hard: ");
             Serial.println(ps2x.Analog(PSAB_PAD_DOWN), DEC);
+            // 设置电机PID目标转速
+            lastMotorCommand = millis();
+            moving = 1;
+            leftPID.TargetTicksPerFrame = ps2_motor_spd * -1;
+            rightPID.TargetTicksPerFrame = ps2_motor_spd * -1;
         }
         // 振动强度：按下蓝色（X）按钮的力度
-        ps2_vibrate = ps2x.Analog(PSAB_BLUE);  // this will set the large motor ps2_vibrate speed based on how hard you press the blue (X) button
+        //ps2_vibrate = ps2x.Analog(PSAB_BLUE);  // this will set the large motor ps2_vibrate speed based on how hard you press the blue (X) button
         // 右侧4个按键
         if (ps2x.NewButtonState())  // will be TRUE if any button changes state  (on to off, or off to on)
         {
@@ -387,6 +381,37 @@ void loop() {
     }
     delay(50);
   #endif
+  
+
+  // If we are using base control, run a PID calculation at the appropriate intervals
+  // 启动底盘控制时，执行PID控制
+  #ifdef USE_BASE
+    //如果当前时刻大于 nextPID,那么就执行PID调速，并在 nextPID 上自增一个PID调试周期
+    if (millis() > nextPID) {
+        // 读取编码器值->计算PID->设置电机PWM（diff_controller.h）
+        updatePID();
+        nextPID += PID_INTERVAL;
+    }
+    
+    // Check to see if we have exceeded the auto-stop interval
+    // 电机指令自动停止
+    if ((millis() - lastMotorCommand) > AUTO_STOP_INTERVAL) {
+        setMotorSpeeds(0, 0);
+        moving = 0;
+    }
+  #endif
+
+
+  // Sweep servos
+  // 扫描伺候
+  #ifdef USE_SERVOS
+    int i;
+    for (i = 0; i < N_SERVOS; i++) {
+        servos[i].doSweep();
+    }
+  #endif
+
+
 }
 
 

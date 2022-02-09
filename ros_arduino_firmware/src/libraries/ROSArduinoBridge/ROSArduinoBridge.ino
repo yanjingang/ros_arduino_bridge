@@ -327,8 +327,8 @@ void loop() {
             // 设置电机PID目标转速
             lastMotorCommand = millis();
             moving = 1;
-            leftPID.TargetTicksPerFrame = ps2_motor_spd;
-            rightPID.TargetTicksPerFrame = ps2_motor_spd * -1;
+            leftPID.TargetTicksPerFrame = ps2_motor_spd/2;
+            rightPID.TargetTicksPerFrame = ps2_motor_spd/2 * -1;
         }
         if (ps2x.Button(PSB_PAD_LEFT)) {
             Serial.print("LEFT held this hard: ");
@@ -336,8 +336,8 @@ void loop() {
             // 设置电机PID目标转速
             lastMotorCommand = millis();
             moving = 1;
-            leftPID.TargetTicksPerFrame = ps2_motor_spd * -1;
-            rightPID.TargetTicksPerFrame = ps2_motor_spd;
+            leftPID.TargetTicksPerFrame = ps2_motor_spd/2 * -1;
+            rightPID.TargetTicksPerFrame = ps2_motor_spd/2;
         }
         if (ps2x.Button(PSB_PAD_DOWN)) {
             Serial.print("DOWN held this hard: ");

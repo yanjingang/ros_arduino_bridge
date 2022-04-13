@@ -62,6 +62,9 @@ class Arduino:
         # An array to cache digital sensor readings
         self.digital_sensor_cache = [None] * self.N_DIGITAL_PORTS
 
+        # 用于清除重复log打印
+        self.last_execute_array_values = [0,0]
+
     def connect(self):
         try:
             print("Connecting to Arduino on port " + self.port + " ...")
@@ -217,7 +220,9 @@ class Arduino:
             values = list(map(int, values))
         except:
             values = []
-        if len(values) == 2 and (values[0] != 0 or values[0] != 0):   # debug print
+            
+        # debug print
+        if len(values) == 2 and (values[0] != 0 or values[1] != 0) and values[0] != self.last_execute_array_values[0]:   
             print("execute_array cmd: {}  recv: {}".format(cmd, values))
 
         self.mutex.release()

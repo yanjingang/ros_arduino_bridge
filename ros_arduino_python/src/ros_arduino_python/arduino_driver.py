@@ -224,6 +224,7 @@ class Arduino:
         # debug print
         if len(values) == 2 and (values[0] != 0 or values[1] != 0) and values[0] != self.last_execute_array_values[0]:   
             print("execute_array cmd: {}  recv: {}".format(cmd, values))
+            self.last_execute_array_values = values
 
         self.mutex.release()
         return values
